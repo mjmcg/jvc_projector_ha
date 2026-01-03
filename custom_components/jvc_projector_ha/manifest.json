@@ -1,5 +1,5 @@
 {
-  "domain": "jvc_projector",
+  "domain": "jvc_projector_ha",
   "name": "JVC Projector",
   "config_flow": true,
   "documentation": "https://www.home-assistant.io/integrations/jvc_projector",

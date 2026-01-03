@@ -3,7 +3,7 @@
 from .jvcprojector import const as pj
 
 NAME = "JVC Projector"
-DOMAIN = "jvc_projector"
+DOMAIN = "jvc_projector_ha"
 MANUFACTURER = "JVC"
 
 # ---- 2024 spec additions ----
