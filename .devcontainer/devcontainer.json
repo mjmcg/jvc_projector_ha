@@ -3,7 +3,8 @@
   "image": "ghcr.io/home-assistant/home-assistant:stable",
   "workspaceFolder": "/workspace",
   "mounts": [
-    "source=${localWorkspaceFolder},target=/workspace,type=bind"
+    "source=${localWorkspaceFolder},target=/workspace,type=bind",
+    "source=${env:USERPROFILE}\\.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
   ],
   "customizations": {
     "vscode": {

@@ -20,7 +20,7 @@
         "data_description": {
           "host": "IP address or hostname of the projector",
           "port": "IP port of the projector (default: 20554)",
-          "password": "Optional password if the projector requires one"
+          "password": "Hashed password (required in the 2024 spec))"
         }
       },
       "reauth_confirm": {
@@ -97,13 +97,6 @@
           "UXGA(1600x1200)": "UXGA (1600×1200)",
           "QXGA": "QXGA",
           "WQHD60": "WQHD 60Hz"
-        }
-      },
-      "jvc_input_display": {
-        "name": "Input Display",
-        "state": {
-          "hdmi1": "HDMI-1",
-          "hdmi2": "HDMI-2"
         }
       },
       "jvc_content_type_diagnostic": {
