@@ -8,7 +8,7 @@ import logging
 
 from .jvcprojector.device import JvcProjectorAuthError
 from .jvcprojector.projector import JvcProjector, JvcProjectorConnectError, const
-from .jvcprojector import command #2024 spec
+from .jvcprojector import command  # 2024 spec
 
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
@@ -29,9 +29,7 @@ UPDATE_INTERVAL = timedelta(seconds=10)
 POLL_TIMEOUT = 30  # seconds
 
 
-class JvcProjectorDataUpdateCoordinator(
-    DataUpdateCoordinator[dict[str, str]]
-):
+class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
     """Coordinator for JVC Projector state (2024 spec)."""
 
     def __init__(self, hass: HomeAssistant, device: JvcProjector) -> None:
@@ -109,6 +107,21 @@ class JvcProjectorDataUpdateCoordinator(
                         self.device.host,
                         err,
                     )
+
+                # --- Picture Mode (PMPM) ---
+                try:
+                    raw_picture_mode = await asyncio.wait_for(
+                        self.device.ref(command.PMPM),
+                        timeout=POLL_TIMEOUT,
+                    )
+                    if raw_picture_mode:
+                        result[const.PICTURE_MODE] = raw_picture_mode
+                except Exception as err:
+                    _LOGGER.debug(
+                        "PMPM unavailable while on for %s: %s",
+                        self.device.host,
+                        err,
+                    )
             else:
                 # Projector is off → skip IFLT poll, show power_off state
                 result[const.IFLT] = "power_off"
@@ -119,13 +132,14 @@ class JvcProjectorDataUpdateCoordinator(
                 )
 
             _LOGGER.debug(
-                "State from %s: power=%s input=%s signal=%s iflt=%s ifis=%s",
+                "State from %s: power=%s input=%s signal=%s iflt=%s ifis=%s picture_mode=%s",
                 self.device.host,
                 result.get(const.POWER),
                 result.get(const.INPUT),
                 result.get(const.SOURCE),
                 result.get(const.IFLT),
                 result.get(const.IFIS),
+                result.get(const.PICTURE_MODE),
             )
 
             return result
@@ -136,9 +150,7 @@ class JvcProjectorDataUpdateCoordinator(
 
         except JvcProjectorAuthError as err:
             _LOGGER.error("Authentication failed for %s", self.device.host)
-            raise ConfigEntryAuthFailed(
-                "Password authentication failed"
-            ) from err
+            raise ConfigEntryAuthFailed("Password authentication failed") from err
 
         except JvcProjectorConnectError as err:
             _LOGGER.warning("Connection error polling %s: %s", self.device.host, err)

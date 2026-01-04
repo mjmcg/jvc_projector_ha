@@ -25,21 +25,20 @@ _LOGGER = logging.getLogger(__name__)
 
 JVCConfigEntry = ConfigEntry[JvcProjectorDataUpdateCoordinator]
 
-PLATFORMS = [Platform.BINARY_SENSOR, Platform.REMOTE, Platform.SENSOR]
-
+PLATFORMS = [Platform.BINARY_SENSOR, Platform.REMOTE, Platform.SENSOR, Platform.SELECT]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: JVCConfigEntry) -> bool:
     """Set up integration from a config entry."""
     host = entry.data[CONF_HOST]
-    
+
     # Create new device and coordinator
     device = JvcProjector(
         host=host,
         port=entry.data[CONF_PORT],
         password=entry.data[CONF_PASSWORD],
     )
-    
+
     # Initial connection with proper cleanup on failure
     try:
         _LOGGER.debug("Setting up JVC Projector at %s", host)
@@ -47,45 +46,29 @@ async def async_setup_entry(hass: HomeAssistant, entry: JVCConfigEntry) -> bool:
     except asyncio.TimeoutError:
         _LOGGER.error("Timeout connecting to %s during setup", host)
         await device.disconnect()
-        raise ConfigEntryNotReady(
-            f"Connection timeout to {host}"
-        )
+        raise ConfigEntryNotReady(f"Connection timeout to {host}")
     except JvcProjectorConnectError as err:
         _LOGGER.error("Failed to connect to %s during setup: %s", host, err)
         await device.disconnect()
-        raise ConfigEntryNotReady(
-            f"Unable to connect to {host}"
-        ) from err
+        raise ConfigEntryNotReady(f"Unable to connect to {host}") from err
     except JvcProjectorAuthError as err:
         _LOGGER.error("Authentication failed for %s", host)
         await device.disconnect()
         raise ConfigEntryAuthFailed("Password authentication failed") from err
     except Exception as err:
-        _LOGGER.error(
-            "Unexpected error setting up %s: %s",
-            host,
-            err,
-            exc_info=True
-        )
+        _LOGGER.error("Unexpected error setting up %s: %s", host, err, exc_info=True)
         await device.disconnect()
-        raise ConfigEntryNotReady(
-            f"Unexpected error connecting to {host}"
-        ) from err
-    
+        raise ConfigEntryNotReady(f"Unexpected error connecting to {host}") from err
+
     # Create coordinator
     coordinator = JvcProjectorDataUpdateCoordinator(hass, device)
     entry.runtime_data = coordinator
-    
+
     # Do initial data fetch
     try:
         await coordinator.async_config_entry_first_refresh()
     except Exception as err:
-        _LOGGER.error(
-            "Failed initial data fetch for %s: %s",
-            host,
-            err,
-            exc_info=True
-        )
+        _LOGGER.error("Failed initial data fetch for %s: %s", host, err, exc_info=True)
         # Clean up on failure
         await coordinator.async_shutdown()
         raise
@@ -119,11 +102,11 @@ async def async_unload_entry(hass: HomeAssistant, entry: JVCConfigEntry) -> bool
     """Unload config entry."""
     host = entry.data[CONF_HOST]
     _LOGGER.debug("Unloading JVC Projector at %s", host)
-    
+
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         # Coordinator cleanup is handled by disconnect_on_unload callback
         _LOGGER.debug("Successfully unloaded JVC Projector at %s", host)
     else:
         _LOGGER.error("Failed to unload platforms for %s", host)
-        
+
     return unload_ok

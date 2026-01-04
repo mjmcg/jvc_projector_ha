@@ -26,10 +26,10 @@
         "default": "mdi:timer-outline"
       },
       "jvc_source_display": {
-        "default": "mdi:video-input-hdmi",
+        "default": "mdi:audio-video-off",
         "state": {
-          "no_signal": "mdi:video-input-hdmi",
-          "out_of_range": "mdi:alert-circle-outline",
+          "No Signal": "mdi:audio-video-off",
+          "Out of Range": "mdi:alert-circle-outline",
           "480p": "mdi:video-standard-definition",
           "576p": "mdi:video-standard-definition",
           "720p50": "mdi:high-definition",
@@ -39,28 +39,33 @@
           "1080p30": "mdi:high-definition",
           "1080p50": "mdi:high-definition",
           "1080p60": "mdi:high-definition",
-          "2048x1080_p24": "mdi:high-definition",
-          "2048x1080_p25": "mdi:high-definition",
-          "2048x1080_p30": "mdi:high-definition",
-          "2048x1080_p50": "mdi:high-definition",
-          "2048x1080_p60": "mdi:high-definition",
-          "4k_3840_24": "mdi:video-4k-box",
-          "4k_3840_25": "mdi:video-4k-box",
-          "4k_3840_30": "mdi:video-4k-box",
-          "4k_3840_50": "mdi:video-4k-box",
-          "4k_3840_60": "mdi:video-4k-box",
-          "4k_4096_24": "mdi:video-4k-box",
-          "4k_4096_25": "mdi:video-4k-box",
-          "4k_4096_30": "mdi:video-4k-box",
-          "4k_4096_50": "mdi:video-4k-box",
-          "4k_4096_60": "mdi:video-4k-box",
-          "vga_640x480": "mdi:monitor",
-          "svga_800x600": "mdi:monitor",
-          "wuxga_1920x1200": "mdi:monitor",
-          "uxga_1600x1200": "mdi:monitor",
-          "qxga": "mdi:monitor",
-          "wqhd60": "mdi:monitor"
+          "2048x1080 p24": "mdi:high-definition",
+          "2048x1080 p25": "mdi:high-definition",
+          "2048x1080 p30": "mdi:high-definition",
+          "2048x1080 p50": "mdi:high-definition",
+          "2048x1080 p60": "mdi:high-definition",
+          "4k(3840)24": "mdi:video-4k-box",
+          "4k(3840)25": "mdi:video-4k-box",
+          "4k(3840)30": "mdi:video-4k-box",
+          "4k(3840)50": "mdi:video-4k-box",
+          "4k(3840)60": "mdi:video-4k-box",
+          "4k(4096)24": "mdi:video-4k-box",
+          "4k(4096)25": "mdi:video-4k-box",
+          "4k(4096)30": "mdi:video-4k-box",
+          "4k(4096)50": "mdi:video-4k-box",
+          "4k(4096)60": "mdi:video-4k-box",
+          "VGA(640x480)": "mdi:monitor",
+          "SVGA(800x600)": "mdi:monitor",
+          "WUXGA(1920x1200)": "mdi:high-definition",
+          "UXGA(1600x1200)": "mdi:high-definition",
+          "QXGA": "mdi:high-definition",
+          "WQHD60": "mdi:high-definition"
         }
+      }
+    },
+    "select": {
+      "jvc_picture_mode": {
+        "default": "mdi:palette"
       }
     }
   }
