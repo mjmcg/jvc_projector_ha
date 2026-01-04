@@ -181,6 +181,31 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                 if const.CONTENT_TYPE in result:
                     result[const.CONTENT_TYPE_DIAGNOSTIC] = result[const.CONTENT_TYPE]
 
+                # --- Source Content Type (PMAT) - Auto transition value ---
+                try:
+                    raw_source_content_type = await asyncio.wait_for(
+                        self.device.ref(command.PMAT),
+                        timeout=POLL_TIMEOUT,
+                    )
+                    if raw_source_content_type:
+                        result[const.SOURCE_CONTENT_TYPE] = raw_source_content_type
+                        _LOGGER.debug(
+                            "PMAT response for %s: %s",
+                            self.device.host,
+                            raw_source_content_type,
+                        )
+                except asyncio.TimeoutError:
+                    _LOGGER.warning(
+                        "PMAT timeout for %s - command may not be supported or projector is busy",
+                        self.device.host,
+                    )
+                except Exception as err:
+                    _LOGGER.warning(
+                        "PMAT error for %s: %s",
+                        self.device.host,
+                        err,
+                    )
+
                 # --- Picture Mode (PMPM) ---
                 # Reference command: just "PMPM" per spec, projector responds with PM + 2-byte parameter
                 try:

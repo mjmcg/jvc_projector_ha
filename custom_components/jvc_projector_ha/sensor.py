@@ -127,6 +127,19 @@ JVC_SENSORS = (
             "hlg",
         ],
     ),
+    # Source Content Type (PMAT) - Auto transition value from source signal
+    JVCSensorEntityDescription(
+        key=const.SOURCE_CONTENT_TYPE,
+        translation_key="jvc_source_content_type",
+        device_class=SensorDeviceClass.ENUM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        options=[
+            "sdr",
+            "hdr10+",
+            "hdr10",
+            "hlg",
+        ],
+    ),
 )
 
 

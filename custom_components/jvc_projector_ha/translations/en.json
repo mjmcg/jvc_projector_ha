@@ -108,6 +108,15 @@
           "hdr10": "HDR10",
           "hlg": "HLG"
         }
+      },
+      "jvc_source_content_type": {
+        "name": "Source Content Type",
+        "state": {
+          "sdr": "SDR",
+          "hdr10+": "HDR10+",
+          "hdr10": "HDR10",
+          "hlg": "HLG"
+        }
       }
     },
     "select": {
