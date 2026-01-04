@@ -65,7 +65,7 @@
     },
     "select": {
       "jvc_picture_mode": {
-        "default": "mdi:palette"
+        "default": "mdi:image-filter-hdr"
       }
     }
   }

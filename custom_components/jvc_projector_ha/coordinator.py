@@ -6,6 +6,8 @@ import asyncio
 from datetime import timedelta
 import logging
 
+from collections.abc import Mapping
+
 from .jvcprojector.device import JvcProjectorAuthError
 from .jvcprojector.projector import JvcProjector, JvcProjectorConnectError, const
 from .jvcprojector import command  # 2024 spec
@@ -49,7 +51,7 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
             self.unique_id,
         )
 
-    async def _async_update_data(self) -> dict[str, str]:
+    async def _async_update_data(self) -> Mapping[str, str | int | None]:
         """Fetch state from the projector.
 
         One connect → one poll → disconnect.
@@ -78,7 +80,8 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
 
             # --- Light Source Time (IFLT) ---
             # Only valid when projector is ON
-            if power in (const.ON):
+            # if power in (const.ON):
+            if isinstance(state, str) and "on" in state:
                 try:
                     raw_light_time = await asyncio.wait_for(
                         self.device.ref(command.IFLT),

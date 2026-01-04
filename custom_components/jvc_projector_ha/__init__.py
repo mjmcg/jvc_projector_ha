@@ -19,11 +19,14 @@ from homeassistant.const import (
 from homeassistant.core import Event, HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 
+from typing import TypeAlias
+
 from .coordinator import JvcProjectorDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-JVCConfigEntry = ConfigEntry[JvcProjectorDataUpdateCoordinator]
+# JVCConfigEntry = ConfigEntry[JvcProjectorDataUpdateCoordinator]
+JVCConfigEntry: TypeAlias = ConfigEntry[JvcProjectorDataUpdateCoordinator]
 
 PLATFORMS = [Platform.BINARY_SENSOR, Platform.REMOTE, Platform.SENSOR, Platform.SELECT]
 
