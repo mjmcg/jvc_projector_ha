@@ -178,21 +178,22 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                     )
 
                 # Store content type in diagnostic key too for comparison
-                if const.CONTENT_TYPE in result:
-                    result[const.CONTENT_TYPE_DIAGNOSTIC] = result[const.CONTENT_TYPE]
+                if const.PMCT in result:
+                    result[const.PMCT + "_diagnostic"] = result[const.PMCT]
 
-                # --- Source Content Type (PMAT) - Auto transition value ---
+                # --- Auto transition value for Content Type (PMAT) ---
                 try:
-                    raw_source_content_type = await asyncio.wait_for(
+                    raw_auto_content_type = await asyncio.wait_for(
                         self.device.ref(command.PMAT),
                         timeout=POLL_TIMEOUT,
                     )
-                    if raw_source_content_type:
-                        result[const.SOURCE_CONTENT_TYPE] = raw_source_content_type
+                    if raw_auto_content_type:
+                        result[const.PMAT] = raw_auto_content_type
                         _LOGGER.debug(
                             "PMAT response for %s: %s",
                             self.device.host,
-                            raw_source_content_type,
+                            raw_auto_content_type,
+                        )
                         )
                 except asyncio.TimeoutError:
                     _LOGGER.warning(

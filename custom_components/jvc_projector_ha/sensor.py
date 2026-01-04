@@ -115,7 +115,7 @@ JVC_SENSORS = (
     ),
     # Content Type (PMCT) - Diagnostic to compare with control
     JVCSensorEntityDescription(
-        key=const.CONTENT_TYPE_DIAGNOSTIC,
+        key=const.PMCT + "_diagnostic",
         translation_key="jvc_content_type_diagnostic",
         device_class=SensorDeviceClass.ENUM,
         entity_category=EntityCategory.DIAGNOSTIC,
@@ -129,8 +129,8 @@ JVC_SENSORS = (
     ),
     # Source Content Type (PMAT) - Auto transition value from source signal
     JVCSensorEntityDescription(
-        key=const.SOURCE_CONTENT_TYPE,
-        translation_key="jvc_source_content_type",
+        key=const.PMAT,
+        translation_key="jvc_auto_content_type",
         device_class=SensorDeviceClass.ENUM,
         entity_category=EntityCategory.DIAGNOSTIC,
         options=[

@@ -62,13 +62,13 @@ CONTENT_TYPE_PICTURE_MODES = {
 # Select entities supported by the 2024 LAN spec
 JVC_SELECTS = (
     JVCSelectEntityDescription(
-        key=const.PICTURE_MODE,
+        key=const.PMPM,
         translation_key="jvc_picture_mode",
         command_code=command.PMPM,
         options=list(PICTURE_MODE_TO_CODE.keys()),
     ),
     JVCSelectEntityDescription(
-        key=const.CONTENT_TYPE,
+        key=const.PMCT,
         translation_key="jvc_content_type",
         command_code=command.PMCT,
         options=list(CONTENT_TYPE_TO_CODE.keys()),
@@ -127,17 +127,11 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
 
         For picture mode, filter options based on current content type.
         """
-        if self.entity_description.key != const.PICTURE_MODE:
+        if self.entity_description.key != const.PMPM:
             return self.entity_description.options
-
+        
         # Get current content type from coordinator
-        content_type = self.coordinator.data.get(const.CONTENT_TYPE)
-        if not content_type or content_type not in CONTENT_TYPE_PICTURE_MODES:
-            # Default to all modes if content type unknown
-            return self.entity_description.options
-
-        # Return only modes valid for current content type
-        return CONTENT_TYPE_PICTURE_MODES[content_type]
+        content_type = self.coordinator.data.get(const.PMCT)
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
@@ -146,12 +140,12 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
             return
 
         # Get the command code for this option
-        if self.entity_description.key == const.PICTURE_MODE:
+        if self.entity_description.key == const.PMPM:
             code = PICTURE_MODE_TO_CODE.get(option)
             if not code:
                 _LOGGER.error("No command code for picture mode: %s", option)
                 return
-        elif self.entity_description.key == const.CONTENT_TYPE:
+        elif self.entity_description.key == const.PMCT:
             code = CONTENT_TYPE_TO_CODE.get(option)
             if not code:
                 _LOGGER.error("No command code for content type: %s", option)

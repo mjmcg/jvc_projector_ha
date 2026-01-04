@@ -109,8 +109,8 @@
           "hlg": "HLG"
         }
       },
-      "jvc_source_content_type": {
-        "name": "Source Content Type",
+      "jvc_auto_content_type": {
+        "name": "Auto Content Type",
         "state": {
           "sdr": "SDR",
           "hdr10+": "HDR10+",

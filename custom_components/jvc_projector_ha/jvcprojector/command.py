@@ -178,6 +178,13 @@ class JvcCommand:
             "3": "hdr10",
             "4": "hlg",
         },
+        # Auto transition value for Content Type (PMAT) - Table 3-33 - Response is PM + 1 byte
+        "PMAT(.)": {
+            "1": "sdr",
+            "2": "hdr10+",
+            "3": "hdr10",
+            "4": "hlg",
+        },
         # Picture Mode - Intelligent Lens Aperture
         "PMDI(.)": ["off", "auto1", "auto2"],
         # Picture Mode - Color Profile

@@ -22,10 +22,9 @@ SIGNAL: Final = "signal"
 IFLT: Final = "IFLT"  # Light Source Time (numeric, hours)
 IFIN: Final = "IFIN"  # Input Display (diagnostic)
 IFIS: Final = "IFIS"  # Source Display (on/off)
-PICTURE_MODE: Final = "picture_mode"  # Picture Mode
-CONTENT_TYPE: Final = "content_type"  # Content Type (control)
-CONTENT_TYPE_DIAGNOSTIC: Final = "content_type_diagnostic"  # Content Type (diagnostic)
-SOURCE_CONTENT_TYPE: Final = "source_content_type"  # Source Content Type (auto transition value)
+PMPM: Final = "PMPM"  # Picture Mode
+PMCT: Final = "PMCT"  # Content Type
+PMAT: Final = "PMAT"  # Auto transition value for Content Type
 
 REMOTE_MENU: Final = "732E"
 REMOTE_UP: Final = "7301"
