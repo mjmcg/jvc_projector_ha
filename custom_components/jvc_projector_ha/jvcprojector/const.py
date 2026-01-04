@@ -20,6 +20,7 @@ SIGNAL: Final = "signal"
 
 # ---- 2024 D-ILA LAN spec (raw command names) ----
 IFLT: Final = "IFLT"  # Light Source Time (numeric, hours)
+IFIS: Final = "IFIS"  # Source Display (on/off)
 
 REMOTE_MENU: Final = "732E"
 REMOTE_UP: Final = "7301"

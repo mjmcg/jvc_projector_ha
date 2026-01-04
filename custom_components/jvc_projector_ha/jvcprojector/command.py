@@ -35,6 +35,7 @@ INPUT: Final = "IP"
 REMOTE: Final = "RC"
 
 IFLT: Final = "IFLT"  # Light Source Time (2024 spec)
+IFIS: Final = "IFIS"  # Source Display (2024 spec)
 
 AUTH_SALT: Final = "JVCKWPJ"
 
@@ -110,6 +111,41 @@ class JvcCommand:
         },
         # Source
         "SC(.)": [const.NOSIGNAL, const.SIGNAL],
+        # Source Display (IFIS) - Special 4 Data (2 bytes) - Table 3-60
+        "IFIS(..)": {
+            "02": "480p",
+            "03": "576p",
+            "04": "720p50",
+            "05": "720p60",
+            "08": "1080p24",
+            "09": "1080p50",
+            "0A": "1080p60",
+            "0B": "no_signal",
+            "0F": "out_of_range",
+            "10": "4k_4096_60",
+            "11": "4k_4096_50",
+            "12": "4k_4096_30",
+            "13": "4k_4096_25",
+            "14": "4k_4096_24",
+            "15": "4k_3840_60",
+            "16": "4k_3840_50",
+            "17": "4k_3840_30",
+            "18": "4k_3840_25",
+            "19": "4k_3840_24",
+            "1C": "1080p25",
+            "1D": "1080p30",
+            "1E": "2048x1080_p24",
+            "1F": "2048x1080_p25",
+            "20": "2048x1080_p30",
+            "21": "2048x1080_p50",
+            "22": "2048x1080_p60",
+            "25": "vga_640x480",
+            "26": "svga_800x600",
+            "2C": "wuxga_1920x1200",
+            "30": "uxga_1600x1200",
+            "31": "qxga",
+            "3D": "wqhd60",
+        },
         # Model
         "MD(.+)": lambda r: re.sub(r"-+", "-", r[1].replace(" ", "-")),
         # Picture Mode

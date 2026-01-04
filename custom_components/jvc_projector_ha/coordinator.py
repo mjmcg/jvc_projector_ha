@@ -94,6 +94,21 @@ class JvcProjectorDataUpdateCoordinator(
                         self.device.host,
                         err,
                     )
+
+                # --- Source Display (IFIS) ---
+                try:
+                    raw_source_display = await asyncio.wait_for(
+                        self.device.ref(command.IFIS),
+                        timeout=POLL_TIMEOUT,
+                    )
+                    if raw_source_display:
+                        result[const.IFIS] = raw_source_display
+                except Exception as err:
+                    _LOGGER.debug(
+                        "IFIS unavailable while on for %s: %s",
+                        self.device.host,
+                        err,
+                    )
             else:
                 # Projector is off → skip IFLT poll, show power_off state
                 result[const.IFLT] = "power_off"
@@ -104,12 +119,13 @@ class JvcProjectorDataUpdateCoordinator(
                 )
 
             _LOGGER.debug(
-                "State from %s: power=%s input=%s signal=%s iflt=%s",
+                "State from %s: power=%s input=%s signal=%s iflt=%s ifis=%s",
                 self.device.host,
                 result.get(const.POWER),
                 result.get(const.INPUT),
                 result.get(const.SOURCE),
                 result.get(const.IFLT),
+                result.get(const.IFIS),
             )
 
             return result
