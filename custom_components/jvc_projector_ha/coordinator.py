@@ -159,7 +159,7 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                         timeout=POLL_TIMEOUT,
                     )
                     if raw_content_type:
-                        result[const.CONTENT_TYPE] = raw_content_type
+                        result[const.PMCT] = raw_content_type
                         _LOGGER.debug(
                             "PMCT response for %s: %s",
                             self.device.host,
@@ -214,7 +214,7 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                         timeout=POLL_TIMEOUT,
                     )
                     if raw_picture_mode:
-                        result[const.PICTURE_MODE] = raw_picture_mode
+                        result[const.PMPM] = raw_picture_mode
                         _LOGGER.debug(
                             "PMPM response for %s: %s",
                             self.device.host,
@@ -248,7 +248,7 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                 result.get(const.SOURCE),
                 result.get(const.IFLT),
                 result.get(const.IFIS),
-                result.get(const.PICTURE_MODE),
+                result.get(const.PMPM),
             )
 
             return result
