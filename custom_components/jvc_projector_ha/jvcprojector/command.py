@@ -149,6 +149,8 @@ class JvcCommand:
             "31": "QXGA",
             "3D": "WQHD60",
         },
+        # Light Source Time (IFLT) - Numeric data in hex, convert to decimal
+        "IFLT(....)": lambda r: str(int(r[1], 16)),
         # Model
         "MD(.+)": lambda r: re.sub(r"-+", "-", r[1].replace(" ", "-")),
         # Input Display (IFIN) - already handled by "(?:IP|IFIN)(.)" pattern above

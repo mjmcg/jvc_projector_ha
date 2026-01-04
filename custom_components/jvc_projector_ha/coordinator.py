@@ -86,11 +86,23 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                         self.device.ref(command.IFLT),
                         timeout=POLL_TIMEOUT,
                     )
+                    _LOGGER.debug(
+                        "IFLT response for %s: %s (type: %s)",
+                        self.device.host,
+                        raw_light_time,
+                        type(raw_light_time).__name__,
+                    )
                     if raw_light_time and raw_light_time.isdigit():
                         result[const.IFLT] = int(raw_light_time)
+                    elif raw_light_time:
+                        _LOGGER.warning(
+                            "IFLT response not numeric for %s: '%s'",
+                            self.device.host,
+                            raw_light_time,
+                        )
                 except Exception as err:
-                    _LOGGER.debug(
-                        "IFLT unavailable while on for %s: %s",
+                    _LOGGER.warning(
+                        "IFLT error for %s: %s",
                         self.device.host,
                         err,
                     )
