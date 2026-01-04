@@ -62,7 +62,7 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
             # Connect only for this poll
             await asyncio.wait_for(
                 self.device.connect(get_info=False),
-                timeout=POLL_TIMEOUT,
+                timeout=POLL_TIMEOUT,bhy6
             )
 
             # Base state (PW, IP, SOURCE)
@@ -104,6 +104,11 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                     )
                     if raw_source_display:
                         result[const.IFIS] = raw_source_display
+                except asyncio.TimeoutError:
+                    _LOGGER.debug(
+                        "IFIS timeout for %s",
+                        self.device.host,
+                    )
                 except Exception as err:
                     _LOGGER.debug(
                         "IFIS unavailable while on for %s: %s",
@@ -112,6 +117,7 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                     )
 
                 # --- Picture Mode (PMPM) ---
+                # Reference command: just "PMPM" per spec, projector responds with PM + 2-byte parameter
                 try:
                     raw_picture_mode = await asyncio.wait_for(
                         self.device.ref(command.PMPM),
@@ -119,9 +125,19 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                     )
                     if raw_picture_mode:
                         result[const.PICTURE_MODE] = raw_picture_mode
+                        _LOGGER.debug(
+                            "PMPM response for %s: %s",
+                            self.device.host,
+                            raw_picture_mode,
+                        )
+                except asyncio.TimeoutError:
+                    _LOGGER.warning(
+                        "PMPM timeout for %s - command may not be supported or projector is busy",
+                        self.device.host,
+                    )
                 except Exception as err:
-                    _LOGGER.debug(
-                        "PMPM unavailable while on for %s: %s",
+                    _LOGGER.warning(
+                        "PMPM error for %s: %s",
                         self.device.host,
                         err,
                     )
