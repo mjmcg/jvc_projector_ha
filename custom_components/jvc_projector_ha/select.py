@@ -114,28 +114,54 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
             return
 
         try:
-            # Send the operation command
-            await self.coordinator.device.op(
-                self.entity_description.command_code + code
-            )
-            _LOGGER.debug(
-                "Set %s to %s (code: %s)",
-                self.entity_description.key,
+            # Log the exact command being sent
+            full_command = self.entity_description.command_code + code
+            _LOGGER.info(
+                "Sending operation command: %s (option: %s, code: %s)",
+                full_command,
                 option,
                 code,
             )
 
+            # Send the operation command
+            # Note: Some projector models may not ACK operation commands
+            # or may only support certain operations based on current input signal
+            try:
+                await asyncio.wait_for(
+                    self.coordinator.device.op(full_command),
+                    timeout=5.0,  # Shorter timeout for operation commands
+                )
+                _LOGGER.info(
+                    "Successfully set %s to %s (command: %s)",
+                    self.entity_description.key,
+                    option,
+                    full_command,
+                )
+            except asyncio.TimeoutError:
+                # Operation commands may timeout if not supported or if the
+                # selected mode is not valid for the current input signal type
+                _LOGGER.warning(
+                    "Operation command %s timed out. The projector may not support "
+                    "this operation, or the selected mode (%s) may not be valid "
+                    "for the current input signal. Check that the picture mode is "
+                    "compatible with your content (SDR/HDR/HLG/etc).",
+                    full_command,
+                    option,
+                )
+                # Don't raise - allow the operation to complete silently
+
             # Brief delay to allow projector to process command
             # before coordinator refresh attempts to reconnect
-            await asyncio.sleep(1.0)
-            
+            await asyncio.sleep(2.0)
+
             # Request a coordinator refresh to update the state
             await self.coordinator.async_request_refresh()
 
         except Exception as err:
             _LOGGER.error(
-                "Failed to set %s to %s: %s",
+                "Failed to set %s to %s (code: %s): %s",
                 self.entity_description.key,
                 option,
+                code,
                 err,
             )

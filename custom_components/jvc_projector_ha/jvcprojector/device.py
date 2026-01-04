@@ -178,14 +178,20 @@ class JvcDevice:
         data = (HEAD_REF if cmd.is_ref else HEAD_OP) + code + END
 
         _LOGGER.debug(
-            "Sending %s '%s (%s)'", "ref" if cmd.is_ref else "op", cmd.code, data
+            "Sending %s '%s' (%s)", "ref" if cmd.is_ref else "op", cmd.code, data
         )
         await self._conn.write(data)
+
+        # Log what ACK we're expecting
+        expected_ack = HEAD_ACK + code[0:2]
+        _LOGGER.debug("Expecting ACK starting with: %s", expected_ack)
 
         try:
             data = await self._conn.readline()
         except asyncio.TimeoutError:
-            _LOGGER.warning("Response timeout for '%s'", cmd.code)
+            _LOGGER.warning(
+                "Response timeout for '%s' - no ACK received after 30s", cmd.code
+            )
             return
 
         _LOGGER.debug("Received ack %s", data)
