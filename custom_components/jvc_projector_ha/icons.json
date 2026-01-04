@@ -9,7 +9,7 @@
       }
     },
     "sensor": {
-      "jvc_power_status": {
+      "jvc_power_state": {
         "default": "mdi:power-plug-off",
         "state": {
           "on": "mdi:power-plug",

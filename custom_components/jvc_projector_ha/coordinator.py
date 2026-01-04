@@ -28,7 +28,7 @@ UPDATE_INTERVAL = timedelta(seconds=10)
 # Hard timeout for any single poll
 POLL_TIMEOUT = 30  # seconds
 
-_LOGGER.warning("🚀 DEPLOY PIPELINE CONFIRMED FROM MAC")
+
 class JvcProjectorDataUpdateCoordinator(
     DataUpdateCoordinator[dict[str, str]]
 ):
