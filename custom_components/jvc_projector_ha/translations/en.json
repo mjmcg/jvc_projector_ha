@@ -55,6 +55,13 @@
       "jvc_light_source_time": {
         "name": "Light Source Time"
       },
+      "jvc_input_display": {
+        "name": "Input Display",
+        "state": {
+          "hdmi1": "HDMI-1",
+          "hdmi2": "HDMI-2"
+        }
+      },
       "jvc_source_display": {
         "name": "Source Display",
         "state": {
@@ -90,6 +97,23 @@
           "UXGA(1600x1200)": "UXGA (1600×1200)",
           "QXGA": "QXGA",
           "WQHD60": "WQHD 60Hz"
+        }
+      },
+      "jvc_input_display": {
+        "name": "Input Display",
+        "state": {
+          "hdmi1": "HDMI-1",
+          "hdmi2": "HDMI-2"
+        }
+      },
+      "jvc_content_type_diagnostic": {
+        "name": "Content Type (Diagnostic)",
+        "state": {
+          "auto": "Auto",
+          "sdr": "SDR",
+          "hdr10+": "HDR10+",
+          "hdr10": "HDR10",
+          "hlg": "HLG"
         }
       }
     },

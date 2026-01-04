@@ -35,6 +35,7 @@ INPUT: Final = "IP"
 REMOTE: Final = "RC"
 
 IFLT: Final = "IFLT"  # Light Source Time (2024 spec)
+IFIN: Final = "IFIN"  # Input Display (2024 spec)
 IFIS: Final = "IFIS"  # Source Display (2024 spec)
 PMPM: Final = "PMPM"  # Picture Mode (2024 spec)
 PMCT: Final = "PMCT"  # Content Type (2024 spec)
@@ -150,6 +151,16 @@ class JvcCommand:
         },
         # Model
         "MD(.+)": lambda r: re.sub(r"-+", "-", r[1].replace(" ", "-")),
+        # Input Display (IFIN) - Table 3-59
+        "IFIN(.)": {"6": "hdmi1", "7": "hdmi2"},
+        # Content Type (PMCT) - Table 3-32
+        "PMCT(.)": {
+            "0": "auto",
+            "1": "sdr",
+            "2": "hdr10+",
+            "3": "hdr10",
+            "4": "hlg",
+        },
         # Picture Mode (PMPM) - Table 3-19
         "PMPM(..)": {
             "01": "cinema",

@@ -115,6 +115,31 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                         err,
                     )
 
+                # --- Input Display (IFIN) ---
+                try:
+                    raw_input_display = await asyncio.wait_for(
+                        self.device.ref(command.IFIN),
+                        timeout=POLL_TIMEOUT,
+                    )
+                    if raw_input_display:
+                        result[const.IFIN] = raw_input_display
+                        _LOGGER.debug(
+                            "IFIN response for %s: %s",
+                            self.device.host,
+                            raw_input_display,
+                        )
+                except asyncio.TimeoutError:
+                    _LOGGER.warning(
+                        "IFIN timeout for %s",
+                        self.device.host,
+                    )
+                except Exception as err:
+                    _LOGGER.warning(
+                        "IFIN error for %s: %s",
+                        self.device.host,
+                        err,
+                    )
+
                 # --- Content Type (PMCT) ---
                 try:
                     raw_content_type = await asyncio.wait_for(
@@ -139,6 +164,10 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                         self.device.host,
                         err,
                     )
+
+                # Store content type in diagnostic key too for comparison
+                if const.CONTENT_TYPE in result:
+                    result[const.CONTENT_TYPE_DIAGNOSTIC] = result[const.CONTENT_TYPE]
 
                 # --- Picture Mode (PMPM) ---
                 # Reference command: just "PMPM" per spec, projector responds with PM + 2-byte parameter

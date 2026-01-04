@@ -20,9 +20,11 @@ SIGNAL: Final = "signal"
 
 # ---- 2024 D-ILA LAN spec (raw command names) ----
 IFLT: Final = "IFLT"  # Light Source Time (numeric, hours)
+IFIN: Final = "IFIN"  # Input Display (diagnostic)
 IFIS: Final = "IFIS"  # Source Display (on/off)
 PICTURE_MODE: Final = "picture_mode"  # Picture Mode
-CONTENT_TYPE: Final = "content_type"  # Content Type
+CONTENT_TYPE: Final = "content_type"  # Content Type (control)
+CONTENT_TYPE_DIAGNOSTIC: Final = "content_type_diagnostic"  # Content Type (diagnostic)
 
 REMOTE_MENU: Final = "732E"
 REMOTE_UP: Final = "7301"

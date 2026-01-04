@@ -62,16 +62,16 @@ CONTENT_TYPE_PICTURE_MODES = {
 # Select entities supported by the 2024 LAN spec
 JVC_SELECTS = (
     JVCSelectEntityDescription(
-        key=const.CONTENT_TYPE,
-        translation_key="jvc_content_type",
-        command_code=command.PMCT,
-        options=list(CONTENT_TYPE_TO_CODE.keys()),
-    ),
-    JVCSelectEntityDescription(
         key=const.PICTURE_MODE,
         translation_key="jvc_picture_mode",
         command_code=command.PMPM,
         options=list(PICTURE_MODE_TO_CODE.keys()),
+    ),
+    JVCSelectEntityDescription(
+        key=const.CONTENT_TYPE,
+        translation_key="jvc_content_type",
+        command_code=command.PMCT,
+        options=list(CONTENT_TYPE_TO_CODE.keys()),
     ),
 )
 

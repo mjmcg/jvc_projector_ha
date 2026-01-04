@@ -102,6 +102,30 @@ JVC_SENSORS = (
             "QXGA",
             "WQHD60",
         ],
+    ),  # Input Display (IFIN) - Diagnostic to show which HDMI input
+    JVCSensorEntityDescription(
+        key=const.IFIN,
+        translation_key="jvc_input_display",
+        device_class=SensorDeviceClass.ENUM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        options=[
+            "hdmi1",
+            "hdmi2",
+        ],
+    ),
+    # Content Type (PMCT) - Diagnostic to compare with control
+    JVCSensorEntityDescription(
+        key=const.CONTENT_TYPE_DIAGNOSTIC,
+        translation_key="jvc_content_type_diagnostic",
+        device_class=SensorDeviceClass.ENUM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        options=[
+            "auto",
+            "sdr",
+            "hdr10+",
+            "hdr10",
+            "hlg",
+        ],
     ),
 )
 
