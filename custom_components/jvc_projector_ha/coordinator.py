@@ -62,7 +62,7 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
             # Connect only for this poll
             await asyncio.wait_for(
                 self.device.connect(get_info=False),
-                timeout=POLL_TIMEOUT,bhy6
+                timeout=POLL_TIMEOUT,
             )
 
             # Base state (PW, IP, SOURCE)
