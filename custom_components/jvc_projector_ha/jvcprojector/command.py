@@ -151,17 +151,8 @@ class JvcCommand:
         },
         # Model
         "MD(.+)": lambda r: re.sub(r"-+", "-", r[1].replace(" ", "-")),
-        # Input Display (IFIN) - Table 3-59
-        "IFIN(.)": {"6": "hdmi1", "7": "hdmi2"},
-        # Content Type (PMCT) - Table 3-32
-        "PMCT(.)": {
-            "0": "auto",
-            "1": "sdr",
-            "2": "hdr10+",
-            "3": "hdr10",
-            "4": "hlg",
-        },
-        # Picture Mode (PMPM) - Table 3-19
+        # Input Display (IFIN) - already handled by "(?:IP|IFIN)(.)" pattern above
+        # Picture Mode (PMPM) - Table 3-19 - Response is PM + 2 bytes (must come before PMCT!)
         "PMPM(..)": {
             "01": "cinema",
             "03": "natural",
@@ -175,6 +166,14 @@ class JvcCommand:
             "17": "filmmaker",
             "18": "frame_adapt_hdr2",
             "1B": "vivid",
+        },
+        # Content Type (PMCT) - Table 3-32 - Response is PM + 1 byte
+        "PMCT(.)": {
+            "0": "auto",
+            "1": "sdr",
+            "2": "hdr10+",
+            "3": "hdr10",
+            "4": "hlg",
         },
         # Picture Mode - Intelligent Lens Aperture
         "PMDI(.)": ["off", "auto1", "auto2"],
