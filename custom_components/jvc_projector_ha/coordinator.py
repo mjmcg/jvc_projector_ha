@@ -194,7 +194,6 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                             self.device.host,
                             raw_auto_content_type,
                         )
-                        )
                 except asyncio.TimeoutError:
                     _LOGGER.warning(
                         "PMAT timeout for %s - command may not be supported or projector is busy",
