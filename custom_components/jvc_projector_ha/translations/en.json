@@ -94,6 +94,16 @@
       }
     },
     "select": {
+      "jvc_content_type": {
+        "name": "Content Type",
+        "state": {
+          "auto": "Auto",
+          "sdr": "SDR",
+          "hdr10+": "HDR10+",
+          "hdr10": "HDR10",
+          "hlg": "HLG"
+        }
+      },
       "jvc_picture_mode": {
         "name": "Picture Mode",
         "state": {

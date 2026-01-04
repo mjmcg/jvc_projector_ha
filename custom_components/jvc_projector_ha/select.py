@@ -41,8 +41,32 @@ PICTURE_MODE_TO_CODE = {
     "vivid": "1B",
 }
 
+# Content Type mapping from internal values to command codes (Table 3-32)
+CONTENT_TYPE_TO_CODE = {
+    "auto": "0",
+    "sdr": "1",
+    "hdr10+": "2",
+    "hdr10": "3",
+    "hlg": "4",
+}
+
+# Picture modes available per content type (from NZ500 manual)
+CONTENT_TYPE_PICTURE_MODES = {
+    "sdr": ["natural", "cinema", "vivid", "filmmaker", "sdr1", "sdr2"],
+    "hdr10+": ["hdr10+"],
+    "hdr10": ["frame_adapt_hdr", "frame_adapt_hdr2", "filmmaker", "hdr1", "hdr2"],
+    "hlg": ["hlg"],
+    "auto": list(PICTURE_MODE_TO_CODE.keys()),  # All modes when in auto
+}
+
 # Select entities supported by the 2024 LAN spec
 JVC_SELECTS = (
+    JVCSelectEntityDescription(
+        key=const.CONTENT_TYPE,
+        translation_key="jvc_content_type",
+        command_code=command.PMCT,
+        options=list(CONTENT_TYPE_TO_CODE.keys()),
+    ),
     JVCSelectEntityDescription(
         key=const.PICTURE_MODE,
         translation_key="jvc_picture_mode",
@@ -97,6 +121,24 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
         )
         return None
 
+    @property
+    def options(self) -> list[str]:
+        """Return the list of available options.
+
+        For picture mode, filter options based on current content type.
+        """
+        if self.entity_description.key != const.PICTURE_MODE:
+            return self.entity_description.options
+
+        # Get current content type from coordinator
+        content_type = self.coordinator.data.get(const.CONTENT_TYPE)
+        if not content_type or content_type not in CONTENT_TYPE_PICTURE_MODES:
+            # Default to all modes if content type unknown
+            return self.entity_description.options
+
+        # Return only modes valid for current content type
+        return CONTENT_TYPE_PICTURE_MODES[content_type]
+
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
         if option not in self.entity_description.options:
@@ -108,6 +150,11 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
             code = PICTURE_MODE_TO_CODE.get(option)
             if not code:
                 _LOGGER.error("No command code for picture mode: %s", option)
+                return
+        elif self.entity_description.key == const.CONTENT_TYPE:
+            code = CONTENT_TYPE_TO_CODE.get(option)
+            if not code:
+                _LOGGER.error("No command code for content type: %s", option)
                 return
         else:
             _LOGGER.error("Unknown select entity: %s", self.entity_description.key)

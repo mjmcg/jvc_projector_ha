@@ -22,6 +22,7 @@ SIGNAL: Final = "signal"
 IFLT: Final = "IFLT"  # Light Source Time (numeric, hours)
 IFIS: Final = "IFIS"  # Source Display (on/off)
 PICTURE_MODE: Final = "picture_mode"  # Picture Mode
+CONTENT_TYPE: Final = "content_type"  # Content Type
 
 REMOTE_MENU: Final = "732E"
 REMOTE_UP: Final = "7301"

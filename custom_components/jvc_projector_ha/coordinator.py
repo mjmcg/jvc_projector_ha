@@ -115,6 +115,31 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                         err,
                     )
 
+                # --- Content Type (PMCT) ---
+                try:
+                    raw_content_type = await asyncio.wait_for(
+                        self.device.ref(command.PMCT),
+                        timeout=POLL_TIMEOUT,
+                    )
+                    if raw_content_type:
+                        result[const.CONTENT_TYPE] = raw_content_type
+                        _LOGGER.debug(
+                            "PMCT response for %s: %s",
+                            self.device.host,
+                            raw_content_type,
+                        )
+                except asyncio.TimeoutError:
+                    _LOGGER.warning(
+                        "PMCT timeout for %s - command may not be supported or projector is busy",
+                        self.device.host,
+                    )
+                except Exception as err:
+                    _LOGGER.warning(
+                        "PMCT error for %s: %s",
+                        self.device.host,
+                        err,
+                    )
+
                 # --- Picture Mode (PMPM) ---
                 # Reference command: just "PMPM" per spec, projector responds with PM + 2-byte parameter
                 try:

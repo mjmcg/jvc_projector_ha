@@ -37,6 +37,7 @@ REMOTE: Final = "RC"
 IFLT: Final = "IFLT"  # Light Source Time (2024 spec)
 IFIS: Final = "IFIS"  # Source Display (2024 spec)
 PMPM: Final = "PMPM"  # Picture Mode (2024 spec)
+PMCT: Final = "PMCT"  # Content Type (2024 spec)
 
 AUTH_SALT: Final = "JVCKWPJ"
 
