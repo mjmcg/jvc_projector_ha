@@ -80,8 +80,7 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
 
             # --- Light Source Time (IFLT) ---
             # Only valid when projector is ON
-            # if power in (const.ON):
-            if isinstance(state, str) and "on" in state:
+            if power == const.ON:
                 try:
                     raw_light_time = await asyncio.wait_for(
                         self.device.ref(command.IFLT),

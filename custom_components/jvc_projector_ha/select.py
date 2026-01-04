@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
 import logging
 
@@ -124,6 +125,10 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
                 code,
             )
 
+            # Brief delay to allow projector to process command
+            # before coordinator refresh attempts to reconnect
+            await asyncio.sleep(1.0)
+            
             # Request a coordinator refresh to update the state
             await self.coordinator.async_request_refresh()
 
