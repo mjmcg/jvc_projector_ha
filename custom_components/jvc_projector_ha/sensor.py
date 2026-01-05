@@ -103,10 +103,10 @@ JVC_SENSORS = (
         ],
     ),
     # Content Type (PMAT) - Content type detected from source signal
-    # Renamed from "Auto Content Type" to "Content Type"
+    # Using 'auto_content_type' key to align with PMAT command spec
     JVCSensorEntityDescription(
-        key=const.PMAT,
-        translation_key="jvc_content_type",
+        key=const.auto_content_type,
+        translation_key="jvc_auto_content_type",
         device_class=SensorDeviceClass.ENUM,
         entity_category=EntityCategory.DIAGNOSTIC,
         options=[

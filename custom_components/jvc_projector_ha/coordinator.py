@@ -188,7 +188,7 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                         timeout=POLL_TIMEOUT,
                     )
                     if raw_auto_content_type:
-                        result[const.PMAT] = raw_auto_content_type
+                        result[const.auto_content_type] = raw_auto_content_type
                         _LOGGER.debug(
                             "PMAT response for %s: %s",
                             self.device.host,

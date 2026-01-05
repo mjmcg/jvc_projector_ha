@@ -100,7 +100,7 @@
           "WQHD60": "WQHD 60Hz"
         }
       },
-      "jvc_content_type": {
+      "jvc_auto_content_type": {
         "name": "Content Type",
         "state": {
           "sdr": "SDR",

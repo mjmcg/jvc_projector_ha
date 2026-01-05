@@ -31,7 +31,7 @@
       "jvc_light_source_time": {
         "default": "mdi:timer-outline"
       },
-      "jvc_content_type": {
+      "jvc_auto_content_type": {
         "default": "mdi:label-variant-outline",
         "state": {
           "sdr": "mdi:television",

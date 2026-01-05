@@ -148,8 +148,8 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
         if self.entity_description.key != const.PMPM:
             return self.entity_description.options
 
-        # Get current content type from PMAT sensor (Auto Content Type, now renamed to Content Type)
-        content_type = self.coordinator.data.get(const.PMAT)
+        # Get current content type from auto_content_type sensor (PMAT)
+        content_type = self.coordinator.data.get(const.auto_content_type)
 
         # If content type is not available, return all options
         if not content_type:
