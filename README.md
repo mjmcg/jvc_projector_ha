@@ -1,29 +1,34 @@
 # JVC Projectors – Home Assistant Integration
 
-A custom Home Assistant integration for JVC projectors using the **2024 External Command Communication Specification**, with a focus on **JVC NZ-series** projectors.
-
-This project uses the [2024 JVC LAN specification](https://www.jvc.com/usa/projectors/installers-calibrators/external-command-communication-specification/) and is designed to support the newer JVC command protocol.
-
-
----
-
-## Features
-
-- Home Assistant custom integration
-- Support for JVC projectors using the 2024 external command protocol
-- Initial focus is on the JVC DLA-NZ500
-- Asynchronous, non-blocking communication model
-- Clean config flow UI
-- Sensors, remote entities, and services aligned with Home Assistant best practices
-- Designed for long-term maintainability and future expansion
-
----
+A custom Home Assistant integration for JVC projectors using the [**2024 External Command Communication Specification**](https://www.jvc.com/usa/projectors/installers-calibrators/external-command-communication-specification/).
 
 ## Supported Models
 
-This integration is currently developed and tested with a **JVC DLA-NZ500 projector**.
+The following projectors are supported:
 
-Other JVC models that implement the 2024 External Command Communication Specification may work but are not yet officially supported.
+- DLA-NZ500, DLA-NZ700, DLA-NZ900
+- DLA-RS1200, DLA-RS2200
+- DLA-N788, DLA-N799, DLA-N888, DLA-N899
+- DLA-N700, DLA-N800
+- DLA-Z5, DLA-Z7
+
+Additional JVC models that implement the 2024 External Command Communication Specification may also work.
+
+---
+
+## Included Entities
+
+**Controls**
+- Power On/Off control
+- Input source
+- Picture mode selection
+
+**Sensors**
+- Content type (SDR/HDR)
+- Light source usage time (hours)
+- Power State (Warming Up/Cooling Down/On/Off)
+- HDMI Signal Present (Yes/No)
+- Source Display Resolution (e.g., 4K60, 1080p60)
 
 ---
 
@@ -53,20 +58,30 @@ If the button does not work, or you don't want to use it, follow these steps to 
 
 ## Configuration
 
-Configuration is performed entirely through the Home Assistant UI.
+Configuration is performed in the Home Assistant UI.
 
-You will need:
-- Projector IP address
-- Hashed password for the projector login
+### You will need:
 - Network connectivity between Home Assistant and the projector
+- Projector IP address
+- Projector Port (default is 20554)
+- Hashed password for the projector login (see below)
+
+
+### Network Connectivity
+If your JVC projector only supports a wired network connection, you can use a travel router like the [TP-Link AC750 Wireless Portable Nano Travel Router (TL-WR902AC)](https://www.tp-link.com/us/home-networking/wifi-router/tl-wr902ac/) in client mode to connect it to your network. This is how I have mine set up, and it has worked flawlessly.
+
+### Generating your Hashed Password
+
+1. Using the remote, set a Network Password for your projector, e.g. "MyPassword"
+2. Append "JVCKWPJ" to that password, e.g. "MyPasswordJVCKWPJ"
+3. Generate the MD5 hash of that string. You can use an online tool like https://codebeautify.org/sha256-hash-generator or a command line tool.
+4. Use the resulting hash string as your password when configuring the integration in Home Assistant, e.g. "98c75d723b5bc9d638c87618bdfde6d6dffe2a5cfebf3d2f918c95e1ea2f3b40".
 
 ---
 
 ## Status
 
-This project is under active development.
-
-Expect ongoing improvements, expanded model support, and additional entities and services.
+This is my first Home Assistant integration so there may be bugs or missing features.
 
 Testing feedback and issue reports are welcome.
 
@@ -78,7 +93,7 @@ This project was inspired by the community-maintained JVC Home Assistant integra
 
 https://github.com/iloveicedgreentea/jvc_homeassistant
 
-The current codebase has been rewritten to support the 2024 External Command Communication Specification and NZ-series projectors.
+Thanks to @iloveicedgreentea for their work on JVC projectors in Home Assistant.
 
 ---
 
