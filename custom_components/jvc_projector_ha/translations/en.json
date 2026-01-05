@@ -34,6 +34,14 @@
   },
 
   "entity": {
+    "binary_sensor": {
+      "jvc_power": {
+        "name": "Power"
+      },
+      "jvc_signal_present": {
+        "name": "Signal Present"
+      }
+    },
     "sensor": {
       "jvc_power_state": {
         "name": "Power State",

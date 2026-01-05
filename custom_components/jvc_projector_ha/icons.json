@@ -6,6 +6,12 @@
         "state": {
           "on": "mdi:projector"
         }
+      },
+      "jvc_signal_present": {
+        "default": "mdi:audio-video-off",
+        "state": {
+          "on": "mdi:audio-video"
+        }
       }
     },
     "sensor": {
@@ -19,11 +25,20 @@
           "error": "mdi:alert-circle"
         }
       },
-      "jvc_input": {
+      "jvc_input_display": {
         "default": "mdi:hdmi-port"
-      },
+      },      
       "jvc_light_source_time": {
         "default": "mdi:timer-outline"
+      },
+      "jvc_content_type": {
+        "default": "mdi:label-variant-outline",
+        "state": {
+          "sdr": "mdi:television",
+          "hdr10+": "mdi:television-shimmer",
+          "hdr10": "mdi:television-shimmer",
+          "hlg": "mdi:television-shimmer"
+        }
       },
       "jvc_source_display": {
         "default": "mdi:audio-video-off",
@@ -66,7 +81,10 @@
     "select": {
       "jvc_picture_mode": {
         "default": "mdi:image-filter-hdr"
-      }
+      },
+      "jvc_input_select": {
+        "default": "mdi:hdmi-port"
+      }      
     }
   }
 }
