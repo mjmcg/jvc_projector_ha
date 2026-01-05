@@ -6,9 +6,6 @@ NAME = "JVC Projector"
 DOMAIN = "jvc_projector_ha"
 MANUFACTURER = "JVC"
 
-# ---- 2024 spec additions ----
-KEY_LIGHT_SOURCE_TIME = "light_source_time"
-
 # Remote buttons exposed to Home Assistant.
 # These are IR-equivalent commands confirmed in the 2024 LAN spec.
 REMOTE_COMMANDS = {

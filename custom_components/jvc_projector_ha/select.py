@@ -104,6 +104,23 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
         self._attr_unique_id = f"{coordinator.unique_id}_{description.key}"
 
     @property
+    def available(self) -> bool:
+        """Return if entity is available.
+        
+        Input and Picture Mode controls are only available when projector is on.
+        """
+        if not self.coordinator.last_update_success:
+            return False
+        
+        power = self.coordinator.data.get(const.POWER)
+        
+        # Only enable these controls when projector is on
+        if self.entity_description.key in (const.INPUT, const.PMPM):
+            return power == const.ON
+        
+        return True
+
+    @property
     def current_option(self) -> str | None:
         """Return the current selected option."""
         value = self.coordinator.data.get(self.entity_description.key)
