@@ -45,13 +45,6 @@
           "error": "Error"
         }
       },
-      "jvc_input": {
-        "name": "Input",
-        "state": {
-          "hdmi1": "HDMI 1",
-          "hdmi2": "HDMI 2"
-        }
-      },
       "jvc_light_source_time": {
         "name": "Light Source Time"
       },
@@ -99,18 +92,8 @@
           "WQHD60": "WQHD 60Hz"
         }
       },
-      "jvc_content_type_diagnostic": {
-        "name": "Content Type (Diagnostic)",
-        "state": {
-          "auto": "Auto",
-          "sdr": "SDR",
-          "hdr10+": "HDR10+",
-          "hdr10": "HDR10",
-          "hlg": "HLG"
-        }
-      },
-      "jvc_auto_content_type": {
-        "name": "Auto Content Type",
+      "jvc_content_type": {
+        "name": "Content Type",
         "state": {
           "sdr": "SDR",
           "hdr10+": "HDR10+",
@@ -120,14 +103,11 @@
       }
     },
     "select": {
-      "jvc_content_type": {
-        "name": "Content Type",
+      "jvc_input_select": {
+        "name": "Input",
         "state": {
-          "auto": "Auto",
-          "sdr": "SDR",
-          "hdr10+": "HDR10+",
-          "hdr10": "HDR10",
-          "hlg": "HLG"
+          "hdmi1": "HDMI 1",
+          "hdmi2": "HDMI 2"
         }
       },
       "jvc_picture_mode": {

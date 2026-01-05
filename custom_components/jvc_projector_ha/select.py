@@ -67,11 +67,12 @@ JVC_SELECTS = (
         command_code=command.PMPM,
         options=list(PICTURE_MODE_TO_CODE.keys()),
     ),
+    # Input selection control
     JVCSelectEntityDescription(
-        key=const.PMCT,
-        translation_key="jvc_content_type",
-        command_code=command.PMCT,
-        options=list(CONTENT_TYPE_TO_CODE.keys()),
+        key=const.INPUT,
+        translation_key="jvc_input_select",
+        command_code=command.INPUT,
+        options=[const.HDMI1, const.HDMI2],
     ),
 )
 
@@ -129,9 +130,20 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
         """
         if self.entity_description.key != const.PMPM:
             return self.entity_description.options
-        
-        # Get current content type from coordinator
-        content_type = self.coordinator.data.get(const.PMCT)
+
+        # Get current content type from PMAT sensor (Auto Content Type, now renamed to Content Type)
+        content_type = self.coordinator.data.get(const.PMAT)
+
+        # If content type is not available, return all options
+        if not content_type:
+            return self.entity_description.options
+
+        # Filter picture modes based on content type
+        filtered_modes = CONTENT_TYPE_PICTURE_MODES.get(content_type, [])
+        if not filtered_modes:
+            return self.entity_description.options
+
+        return filtered_modes
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
@@ -145,11 +157,9 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
             if not code:
                 _LOGGER.error("No command code for picture mode: %s", option)
                 return
-        elif self.entity_description.key == const.PMCT:
-            code = CONTENT_TYPE_TO_CODE.get(option)
-            if not code:
-                _LOGGER.error("No command code for content type: %s", option)
-                return
+        elif self.entity_description.key == const.INPUT:
+            # Input codes: HDMI-1 = '6', HDMI-2 = '7' (from Table 3-6)
+            code = "6" if option == const.HDMI1 else "7"
         else:
             _LOGGER.error("Unknown select entity: %s", self.entity_description.key)
             return

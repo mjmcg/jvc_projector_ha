@@ -42,18 +42,6 @@ JVC_SENSORS = (
             const.ERROR,
         ],
     ),
-    # Input (IP)
-    JVCSensorEntityDescription(
-        key=const.INPUT,
-        translation_key="jvc_input",
-        device_class=SensorDeviceClass.ENUM,
-        entity_category=EntityCategory.DIAGNOSTIC,
-        options=[
-            const.HDMI1,
-            const.HDMI2,
-            const.NOSIGNAL,
-        ],
-    ),
     # Light Source Time (IFLT)
     JVCSensorEntityDescription(
         key=const.IFLT,
@@ -102,7 +90,8 @@ JVC_SENSORS = (
             "QXGA",
             "WQHD60",
         ],
-    ),  # Input Display (IFIN) - Diagnostic to show which HDMI input
+    ),
+    # Input Display (IFIN) - Diagnostic to show which HDMI input
     JVCSensorEntityDescription(
         key=const.IFIN,
         translation_key="jvc_input_display",
@@ -113,24 +102,11 @@ JVC_SENSORS = (
             "hdmi2",
         ],
     ),
-    # Content Type (PMCT) - Diagnostic to compare with control
-    JVCSensorEntityDescription(
-        key=const.PMCT + "_diagnostic",
-        translation_key="jvc_content_type_diagnostic",
-        device_class=SensorDeviceClass.ENUM,
-        entity_category=EntityCategory.DIAGNOSTIC,
-        options=[
-            "auto",
-            "sdr",
-            "hdr10+",
-            "hdr10",
-            "hlg",
-        ],
-    ),
-    # Source Content Type (PMAT) - Auto transition value from source signal
+    # Content Type (PMAT) - Content type detected from source signal
+    # Renamed from "Auto Content Type" to "Content Type"
     JVCSensorEntityDescription(
         key=const.PMAT,
-        translation_key="jvc_auto_content_type",
+        translation_key="jvc_content_type",
         device_class=SensorDeviceClass.ENUM,
         entity_category=EntityCategory.DIAGNOSTIC,
         options=[
@@ -190,5 +166,13 @@ class JvcSensor(JvcProjectorEntity, SensorEntity):
                 return int(value)
             except (TypeError, ValueError):
                 return None
+
+        # IFIS (Source Display) - Show "No Signal" when projector is off
+        if self.entity_description.key == const.IFIS:
+            power = self.coordinator.data.get(const.POWER)
+
+            # Projector is off → show "No Signal" instead of Unknown
+            if power in (const.STANDBY, const.COOLING):
+                return "No Signal"
 
         return value
