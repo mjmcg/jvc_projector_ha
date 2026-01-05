@@ -7,8 +7,8 @@ from collections.abc import Mapping
 import logging
 from typing import Any
 
-from jvcprojector.device import JvcProjectorAuthError
-from jvcprojector.projector import DEFAULT_PORT, JvcProjector, JvcProjectorConnectError
+from .jvcprojector.device import JvcProjectorAuthError
+from .jvcprojector.projector import DEFAULT_PORT, JvcProjector, JvcProjectorConnectError
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult

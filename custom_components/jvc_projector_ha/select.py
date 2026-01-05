@@ -167,7 +167,8 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
-        if option not in self.entity_description.options:
+        # Validate against current available options (which may be filtered for picture mode)
+        if option not in self.options:
             _LOGGER.error("Invalid option: %s", option)
             return
 
