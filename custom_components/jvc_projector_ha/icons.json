@@ -32,12 +32,12 @@
         "default": "mdi:timer-outline"
       },
       "jvc_auto_content_type": {
-        "default": "mdi:label-variant-outline",
+        "default": "mdi:audio-video-off",
         "state": {
-          "sdr": "mdi:television",
-          "hdr10+": "mdi:television-shimmer",
-          "hdr10": "mdi:television-shimmer",
-          "hlg": "mdi:television-shimmer"
+          "sdr": "mdi:standard-definition",
+          "hdr10+": "mdi:hdr",
+          "hdr10": "mdi:hdr",
+          "hlg": "mdi:hdr"
         }
       },
       "jvc_source_display": {
