@@ -9,6 +9,7 @@ import logging
 from .jvcprojector import command, const
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -66,6 +67,7 @@ JVC_SELECTS = (
         translation_key="jvc_picture_mode",
         command_code=command.PMPM,
         options=list(PICTURE_MODE_TO_CODE.keys()),
+        entity_category=EntityCategory.CONFIG,
     ),
     # Input selection control
     JVCSelectEntityDescription(
@@ -73,6 +75,7 @@ JVC_SELECTS = (
         translation_key="jvc_input_select",
         command_code=command.INPUT,
         options=[const.HDMI1, const.HDMI2],
+        entity_category=EntityCategory.CONFIG,
     ),
 )
 
