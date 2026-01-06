@@ -76,6 +76,32 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                 k: v for k, v in state.items() if v is not None
             }
 
+            # --- Model (MD) ---
+            # Fetch once per connection - doesn't change
+            try:
+                raw_model = await asyncio.wait_for(
+                    self.device.ref(command.MODEL),
+                    timeout=POLL_TIMEOUT,
+                )
+                if raw_model:
+                    result[const.MODEL] = raw_model
+                    _LOGGER.debug(
+                        "MD response for %s: %s",
+                        self.device.host,
+                        raw_model,
+                    )
+            except asyncio.TimeoutError:
+                _LOGGER.debug(
+                    "MD timeout for %s",
+                    self.device.host,
+                )
+            except Exception as err:
+                _LOGGER.debug(
+                    "MD error for %s: %s",
+                    self.device.host,
+                    err,
+                )
+
             power = result.get(const.POWER)
 
             # --- Light Source Time (IFLT) ---

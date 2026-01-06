@@ -116,6 +116,12 @@ JVC_SENSORS = (
             "hlg",
         ],
     ),
+    # Model - Projector model name
+    JVCSensorEntityDescription(
+        key=const.MODEL,
+        translation_key="jvc_model",
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
 )
 
 

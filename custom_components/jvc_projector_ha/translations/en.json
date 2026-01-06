@@ -108,6 +108,9 @@
           "hdr10": "HDR10",
           "hlg": "HLG"
         }
+      },
+      "jvc_model": {
+        "name": "Model"
       }
     },
     "select": {

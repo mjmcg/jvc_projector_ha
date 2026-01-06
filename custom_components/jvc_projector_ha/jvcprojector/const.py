@@ -22,6 +22,7 @@ SIGNAL: Final = "signal"
 IFLT: Final = "IFLT"  # Light Source Time (numeric, hours)
 IFIN: Final = "IFIN"  # Input Display (diagnostic)
 IFIS: Final = "IFIS"  # Source Display (on/off)
+MODEL: Final = "model"  # Projector model
 PMPM: Final = "PMPM"  # Picture Mode
 PMCT: Final = "PMCT"  # Content Type
 PMAT: Final = "PMAT"  # Auto transition value for Content Type
