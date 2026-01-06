@@ -20,12 +20,12 @@
         "data_description": {
           "host": "IP address or hostname of the projector",
           "port": "IP port of the projector (default: 20554)",
-          "password": "Hashed password (required in the 2024 spec))"
+          "password": "Hashed network password (required)"
         }
       },
       "reauth_confirm": {
         "title": "Authentication expired",
-        "description": "Please re-enter the projector password",
+        "description": "Please re-enter the hashed network password",
         "data": {
           "password": "Password"
         }
