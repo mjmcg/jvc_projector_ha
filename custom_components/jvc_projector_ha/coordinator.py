@@ -102,6 +102,9 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                         self.device.host,
                         err,
                     )
+            else:
+                # Preserve model from previous data
+                result[const.MODEL] = self.data[const.MODEL]
 
             power = result.get(const.POWER)
 
