@@ -17,7 +17,7 @@ from homeassistant.helpers.device_registry import format_mac
 from homeassistant.util.network import is_host_valid
 
 from . import JVCConfigEntry
-from .const import NAME
+from .const import DOMAIN, NAME
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,6 +28,7 @@ class JvcProjectorConfigFlow(ConfigFlow):
     """Config flow for the JVC Projector integration."""
 
     VERSION = 1
+    DOMAIN = DOMAIN
 
     _reauth_entry: JVCConfigEntry | None = None
 
