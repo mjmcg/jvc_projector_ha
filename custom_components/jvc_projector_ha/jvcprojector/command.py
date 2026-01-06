@@ -153,7 +153,7 @@ class JvcCommand:
         # Light Source Time (IFLT) - Numeric data in hex, convert to decimal
         "IFLT(....)": lambda r: str(int(r[1], 16)),
         # Model
-        "MD(.+)": lambda r: re.sub(r"-+", "-", r[1].replace(" ", "-")),
+        "MD(.+)": lambda r: r[1].strip(),
         # Input Display (IFIN) - already handled by "(?:IP|IFIN)(.)" pattern above
         # Picture Mode (PMPM) - Table 3-19 - Response is PM + 2 bytes (must come before PMCT!)
         "PMPM(..)": {

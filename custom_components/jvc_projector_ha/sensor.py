@@ -181,4 +181,14 @@ class JvcSensor(JvcProjectorEntity, SensorEntity):
             if power in (const.STANDBY, const.COOLING):
                 return "No Signal"
 
+        # MODEL - Decode internal model codes to actual model names
+        if self.entity_description.key == const.MODEL:
+            model_mapping = {
+                "ILAFPJ-D8A1": "DLA-NZ700",
+                "ILAFPJ-D8A2": "DLA-NZ500",
+                "ILAFPJ-B8A1": "DLA-NZ900",
+                "ILAFPJ-B8A2": "DLA-NZ900",
+            }
+            return model_mapping.get(value, value)
+
         return value

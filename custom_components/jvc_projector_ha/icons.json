@@ -40,6 +40,9 @@
           "hlg": "mdi:hdr"
         }
       },
+      "jvc_model": {
+        "default": "mdi:projector"
+      },
       "jvc_source_display": {
         "default": "mdi:audio-video-off",
         "state": {
