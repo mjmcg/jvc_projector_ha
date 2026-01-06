@@ -78,7 +78,7 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
 
             # --- Model (MD) ---
             # Fetch once - only if not already cached (doesn't change)
-            if not self.data.get(const.MODEL):
+            if not self.data or not self.data.get(const.MODEL):
                 try:
                     raw_model = await asyncio.wait_for(
                         self.device.ref(command.MODEL),
