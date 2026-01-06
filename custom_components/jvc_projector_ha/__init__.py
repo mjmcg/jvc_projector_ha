@@ -1,4 +1,4 @@
-"""The jvc_projector integration."""
+"""The jvc_projector_ha integration."""
 
 from __future__ import annotations
 

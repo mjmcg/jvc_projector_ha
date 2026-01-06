@@ -17,14 +17,14 @@ from homeassistant.helpers.device_registry import format_mac
 from homeassistant.util.network import is_host_valid
 
 from . import JVCConfigEntry
-from .const import DOMAIN, NAME
+from .const import NAME
 
 _LOGGER = logging.getLogger(__name__)
 
 CONNECTION_TIMEOUT = 30  # seconds
 
 
-class JvcProjectorConfigFlow(ConfigFlow, domain=DOMAIN):
+class JvcProjectorConfigFlow(ConfigFlow):
     """Config flow for the JVC Projector integration."""
 
     VERSION = 1
@@ -65,7 +65,7 @@ class JvcProjectorConfigFlow(ConfigFlow, domain=DOMAIN):
                     host,
                     port,
                     err,
-                    exc_info=True
+                    exc_info=True,
                 )
             else:
                 await self.async_set_unique_id(format_mac(mac))
@@ -77,7 +77,7 @@ class JvcProjectorConfigFlow(ConfigFlow, domain=DOMAIN):
                     "Successfully configured JVC Projector at %s:%d (MAC: %s)",
                     host,
                     port,
-                    format_mac(mac)
+                    format_mac(mac),
                 )
 
                 return self.async_create_entry(
@@ -135,7 +135,9 @@ class JvcProjectorConfigFlow(ConfigFlow, domain=DOMAIN):
                 )
             except JvcProjectorAuthError:
                 errors["base"] = "invalid_auth"
-                _LOGGER.error("Authentication failed for %s:%d during reauth", host, port)
+                _LOGGER.error(
+                    "Authentication failed for %s:%d during reauth", host, port
+                )
             except Exception as err:
                 errors["base"] = "unknown"
                 _LOGGER.error(
@@ -143,7 +145,7 @@ class JvcProjectorConfigFlow(ConfigFlow, domain=DOMAIN):
                     host,
                     port,
                     err,
-                    exc_info=True
+                    exc_info=True,
                 )
             else:
                 self.hass.config_entries.async_update_entry(
@@ -167,32 +169,25 @@ class InvalidHost(Exception):
 async def get_mac_address(host: str, port: int, password: str | None) -> str:
     """Get device mac address for config flow with proper error handling."""
     device = JvcProjector(host, port=port, password=password)
-    
+
     _LOGGER.debug("Attempting to get MAC address from %s:%d", host, port)
-    
+
     try:
         # Add timeout to prevent hanging
-        await asyncio.wait_for(
-            device.connect(True),
-            timeout=CONNECTION_TIMEOUT
-        )
-        
+        await asyncio.wait_for(device.connect(True), timeout=CONNECTION_TIMEOUT)
+
         if not device.mac:
             raise JvcProjectorConnectError("Device did not provide MAC address")
-            
+
         _LOGGER.debug("Successfully retrieved MAC address from %s:%d", host, port)
         return device.mac
-        
+
     except asyncio.TimeoutError:
         _LOGGER.error("Timeout getting MAC address from %s:%d", host, port)
         raise
     except Exception as err:
         _LOGGER.error(
-            "Error getting MAC address from %s:%d - %s",
-            host,
-            port,
-            err,
-            exc_info=True
+            "Error getting MAC address from %s:%d - %s", host, port, err, exc_info=True
         )
         raise
     finally:
@@ -205,5 +200,5 @@ async def get_mac_address(host: str, port: int, password: str | None) -> str:
                 "Error disconnecting from %s:%d after MAC retrieval - %s",
                 host,
                 port,
-                err
+                err,
             )

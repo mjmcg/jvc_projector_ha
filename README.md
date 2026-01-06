@@ -1,4 +1,4 @@
-# JVC Projectors – Home Assistant Integration
+# JVC Projector HA – Home Assistant Integration
 
 A custom Home Assistant integration for JVC projectors using the [**2024 External Command Communication Specification**](https://www.jvc.com/usa/projectors/installers-calibrators/external-command-communication-specification/).
 
