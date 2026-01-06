@@ -12,8 +12,9 @@ from homeassistant.helpers.device_registry import (
 )
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, MANUFACTURER, NAME
+from .const import DOMAIN, MANUFACTURER, NAME, decode_model
 from .coordinator import JvcProjectorDataUpdateCoordinator
+from .jvcprojector import const as pj_const
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,15 +35,14 @@ class JvcProjectorEntity(CoordinatorEntity[JvcProjectorDataUpdateCoordinator]):
             "identifiers": {(DOMAIN, coordinator.unique_id)},
             "name": NAME,
             "manufacturer": MANUFACTURER,
-            "connections": {
-                (CONNECTION_NETWORK_MAC, coordinator.device.mac)
-            },
+            "connections": {(CONNECTION_NETWORK_MAC, coordinator.device.mac)},
         }
 
         # Optional fields — populate only if available
-        model = getattr(coordinator.device, "_model", None)
-        if model:
-            device_info["model"] = model
+        # Use decoded model from coordinator data if available
+        raw_model = coordinator.data.get(pj_const.MODEL)
+        if raw_model:
+            device_info["model"] = decode_model(raw_model)
 
         version = getattr(coordinator.device, "_version", None)
         if version:

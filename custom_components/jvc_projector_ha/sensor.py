@@ -16,6 +16,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import JVCConfigEntry, JvcProjectorDataUpdateCoordinator
+from .const import decode_model
 from .entity import JvcProjectorEntity
 
 
@@ -183,12 +184,6 @@ class JvcSensor(JvcProjectorEntity, SensorEntity):
 
         # MODEL - Decode internal model codes to actual model names
         if self.entity_description.key == const.MODEL:
-            model_mapping = {
-                "ILAFPJ -- D8A1": "DLA-NZ700",
-                "ILAFPJ -- D8A2": "DLA-NZ500",
-                "ILAFPJ -- B8A1": "DLA-NZ900",
-                "ILAFPJ -- B8A2": "DLA-NZ900",
-            }
-            return model_mapping.get(value, value)
+            return decode_model(value)
 
         return value

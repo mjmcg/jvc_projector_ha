@@ -6,6 +6,22 @@ NAME = "JVC Projector"
 DOMAIN = "jvc_projector_ha"
 MANUFACTURER = "JVC"
 
+# Model name mapping from internal codes to product names
+MODEL_MAPPING = {
+    "ILAFPJ -- D8A1": "DLA-NZ700",
+    "ILAFPJ -- D8A2": "DLA-NZ500",
+    "ILAFPJ -- B8A1": "DLA-NZ900",
+    "ILAFPJ -- B8A2": "DLA-NZ900",
+}
+
+
+def decode_model(raw_model: str | None) -> str | None:
+    """Decode internal model code to product name."""
+    if not raw_model:
+        return None
+    return MODEL_MAPPING.get(raw_model, raw_model)
+
+
 # Remote buttons exposed to Home Assistant.
 # These are IR-equivalent commands confirmed in the 2024 LAN spec.
 REMOTE_COMMANDS = {
@@ -16,30 +32,24 @@ REMOTE_COMMANDS = {
     "right": pj.REMOTE_RIGHT,
     "ok": pj.REMOTE_OK,
     "back": pj.REMOTE_BACK,
-
     "info": pj.REMOTE_INFO,
     "input": pj.REMOTE_INPUT,
-
     # Picture / mode related
     "picture_mode": pj.REMOTE_PICTURE_MODE,
     "color_profile": pj.REMOTE_COLOR_PROFILE,
     "gamma": pj.REMOTE_GAMMA,
     "color_temp": pj.REMOTE_COLOR_TEMP,
-
     # Lens & installation
     "lens_control": pj.REMOTE_LENS_CONTROL,
     "lens_ap": pj.REMOTE_LENS_AP,
     "anamo": pj.REMOTE_ANAMO,
-
     # HDMI shortcuts
     "hdmi_1": pj.REMOTE_HDMI_1,
     "hdmi_2": pj.REMOTE_HDMI_2,
-
     # Mode shortcuts (still supported in 2024)
     "mode_1": pj.REMOTE_MODE_1,
     "mode_2": pj.REMOTE_MODE_2,
     "mode_3": pj.REMOTE_MODE_3,
-
     # Less common but confirmed
     "hide": pj.REMOTE_HIDE,
     "mpc": pj.REMOTE_MPC,

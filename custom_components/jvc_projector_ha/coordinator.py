@@ -77,30 +77,31 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
             }
 
             # --- Model (MD) ---
-            # Fetch once per connection - doesn't change
-            try:
-                raw_model = await asyncio.wait_for(
-                    self.device.ref(command.MODEL),
-                    timeout=POLL_TIMEOUT,
-                )
-                if raw_model:
-                    result[const.MODEL] = raw_model
-                    _LOGGER.debug(
-                        "MD response for %s: %s",
-                        self.device.host,
-                        raw_model,
+            # Fetch once - only if not already cached (doesn't change)
+            if not self.data.get(const.MODEL):
+                try:
+                    raw_model = await asyncio.wait_for(
+                        self.device.ref(command.MODEL),
+                        timeout=POLL_TIMEOUT,
                     )
-            except asyncio.TimeoutError:
-                _LOGGER.debug(
-                    "MD timeout for %s",
-                    self.device.host,
-                )
-            except Exception as err:
-                _LOGGER.debug(
-                    "MD error for %s: %s",
-                    self.device.host,
-                    err,
-                )
+                    if raw_model:
+                        result[const.MODEL] = raw_model
+                        _LOGGER.debug(
+                            "MD response for %s: %s",
+                            self.device.host,
+                            raw_model,
+                        )
+                except asyncio.TimeoutError:
+                    _LOGGER.debug(
+                        "MD timeout for %s",
+                        self.device.host,
+                    )
+                except Exception as err:
+                    _LOGGER.debug(
+                        "MD error for %s: %s",
+                        self.device.host,
+                        err,
+                    )
 
             power = result.get(const.POWER)
 
