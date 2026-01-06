@@ -24,11 +24,10 @@ _LOGGER = logging.getLogger(__name__)
 CONNECTION_TIMEOUT = 30  # seconds
 
 
-class JvcProjectorConfigFlow(ConfigFlow):
+class JvcProjectorConfigFlow(ConfigFlow, domain=DOMAIN):
     """Config flow for the JVC Projector integration."""
 
     VERSION = 1
-    DOMAIN = DOMAIN
 
     _reauth_entry: JVCConfigEntry | None = None
 
