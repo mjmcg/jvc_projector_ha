@@ -64,18 +64,18 @@ Configuration is performed in the Home Assistant UI.
 - Network connectivity between Home Assistant and the projector
 - Projector IP address
 - Projector Port (default is 20554)
-- Hashed password for the projector login (see below)
+- Hashed network password (see below)
 
 
-### Network Connectivity
-If your JVC projector only supports a wired network connection, you can use a travel router like the [TP-Link AC750 Wireless Portable Nano Travel Router (TL-WR902AC)](https://www.tp-link.com/us/home-networking/wifi-router/tl-wr902ac/) in client mode to connect it to your network. This is how I have mine set up, and it has worked flawlessly.
-
-### Generating your Hashed Password
+### Generating your hashed network password
 
 1. Using the remote, set a Network Password for your projector, e.g. "MyPassword"
 2. Append "JVCKWPJ" to that password, e.g. "MyPasswordJVCKWPJ"
 3. Generate the MD5 hash of that string. You can use an online tool like https://codebeautify.org/sha256-hash-generator or a command line tool.
 4. Use the resulting hash string as your password when configuring the integration in Home Assistant, e.g. "98c75d723b5bc9d638c87618bdfde6d6dffe2a5cfebf3d2f918c95e1ea2f3b40".
+
+### Note on network connectivity
+If your JVC projector only has a wired network connection, you can use a travel router like the [TP-Link AC750 Wireless Portable Nano Travel Router (TL-WR902AC)](https://www.tp-link.com/us/home-networking/wifi-router/tl-wr902ac/) in client mode to connect it to your network. This is how I have mine set up and it has worked perfectly.
 
 ---
 
