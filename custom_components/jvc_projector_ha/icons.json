@@ -87,7 +87,15 @@
       },
       "jvc_input_select": {
         "default": "mdi:hdmi-port"
-      }      
+      },
+      "jvc_ld_power": {
+        "default": "mdi:lightbulb-off",
+        "state": {
+          "high": "mdi:lightbulb-on",
+          "med": "mdi:lightbulb-on-50",
+          "low": "mdi:lightbulb-on-20"
+        }
+      }
     }
   }
 }
