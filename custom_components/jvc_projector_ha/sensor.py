@@ -98,6 +98,7 @@ JVC_SENSORS = (
         translation_key="jvc_input_display",
         device_class=SensorDeviceClass.ENUM,
         entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
         options=[
             "hdmi1",
             "hdmi2",
@@ -144,6 +145,7 @@ JVC_SENSORS = (
         key=const.MODEL,
         translation_key="jvc_model",
         entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
 )
 
