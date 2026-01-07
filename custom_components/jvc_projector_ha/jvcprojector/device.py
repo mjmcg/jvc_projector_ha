@@ -33,6 +33,11 @@ from .error import (
 
 KEEPALIVE_TTL = 2
 
+# Delay between commands to prevent overwhelming the projector
+# Projector typically responds in ~100-150ms, but some models may need throttling
+# Reduce at your own risk - some projectors may drop commands if sent too rapidly
+COMMAND_THROTTLE_DELAY = 0.25  # seconds
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -79,7 +84,7 @@ class JvcDevice:
                 for cmd in cmds:
                     await self._send(cmd)
                     # Throttle since some projectors dont like back to back commands
-                    await asyncio.sleep(0.5)
+                    await asyncio.sleep(COMMAND_THROTTLE_DELAY)
                     # If device is not powered on, skip remaining commands
                     if is_refresh and cmds[0].response != const.ON:
                         break

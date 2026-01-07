@@ -29,19 +29,23 @@ class JVCBinarySensorEntityDescription(BinarySensorEntityDescription):
 
 JVC_BINARY_SENSORS = (
     # Projector powered (ON or WARMING)
+    # Disabled by default - redundant with remote.jvc_projector and sensor.jvc_projector_power_state
     JVCBinarySensorEntityDescription(
         key=const.POWER,
         translation_key="jvc_power",
         device_class=BinarySensorDeviceClass.POWER,
         entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
         value_fn=lambda v: v in (const.ON, const.WARMING) if v else None,
     ),
     # Input signal present
+    # Disabled by default - redundant with sensor.jvc_projector_source_display
     JVCBinarySensorEntityDescription(
         key=const.SOURCE,
         translation_key="jvc_signal_present",
         device_class=BinarySensorDeviceClass.CONNECTIVITY,
         entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
         value_fn=lambda v: v == const.SIGNAL if v else None,
     ),
 )
@@ -56,8 +60,7 @@ async def async_setup_entry(
     coordinator: JvcProjectorDataUpdateCoordinator = entry.runtime_data
 
     async_add_entities(
-        JvcBinarySensor(coordinator, description)
-        for description in JVC_BINARY_SENSORS
+        JvcBinarySensor(coordinator, description) for description in JVC_BINARY_SENSORS
     )
 
 

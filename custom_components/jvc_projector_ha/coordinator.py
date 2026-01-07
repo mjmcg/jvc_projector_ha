@@ -208,33 +208,34 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                     )
 
                 # --- Content Type (PMCT) ---
-                try:
-                    raw_content_type = await asyncio.wait_for(
-                        self.device.ref(command.PMCT),
-                        timeout=POLL_TIMEOUT,
-                    )
-                    if raw_content_type:
-                        result[const.PMCT] = raw_content_type
-                        _LOGGER.debug(
-                            "PMCT response for %s: %s",
-                            self.device.host,
-                            raw_content_type,
-                        )
-                except asyncio.TimeoutError:
-                    _LOGGER.warning(
-                        "PMCT timeout for %s - command may not be supported or projector is busy",
-                        self.device.host,
-                    )
-                except Exception as err:
-                    _LOGGER.warning(
-                        "PMCT error for %s: %s",
-                        self.device.host,
-                        err,
-                    )
+                # COMMENTED OUT: Not used by any sensor or control (using PMAT instead)
+                # try:
+                #     raw_content_type = await asyncio.wait_for(
+                #         self.device.ref(command.PMCT),
+                #         timeout=POLL_TIMEOUT,
+                #     )
+                #     if raw_content_type:
+                #         result[const.PMCT] = raw_content_type
+                #         _LOGGER.debug(
+                #             "PMCT response for %s: %s",
+                #             self.device.host,
+                #             raw_content_type,
+                #         )
+                # except asyncio.TimeoutError:
+                #     _LOGGER.warning(
+                #         "PMCT timeout for %s - command may not be supported or projector is busy",
+                #         self.device.host,
+                #     )
+                # except Exception as err:
+                #     _LOGGER.warning(
+                #         "PMCT error for %s: %s",
+                #         self.device.host,
+                #         err,
+                #     )
 
                 # Store content type in diagnostic key too for comparison
-                if const.PMCT in result:
-                    result[const.PMCT + "_diagnostic"] = result[const.PMCT]
+                # if const.PMCT in result:
+                #     result[const.PMCT + "_diagnostic"] = result[const.PMCT]
 
                 # --- Auto transition value for Content Type (PMAT) ---
                 try:
