@@ -111,6 +111,14 @@
       },
       "jvc_model": {
         "name": "Model"
+      },
+      "jvc_ld_power": {
+        "name": "LD Power",
+        "state": {
+          "low": "Low",
+          "med": "Med",
+          "high": "High"
+        }
       }
     },
     "select": {

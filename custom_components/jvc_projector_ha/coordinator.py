@@ -236,6 +236,31 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                         err,
                     )
 
+                # --- LD Power / Lamp Power (PMLP) ---
+                try:
+                    raw_ld_power = await asyncio.wait_for(
+                        self.device.ref(command.PMLP),
+                        timeout=POLL_TIMEOUT,
+                    )
+                    if raw_ld_power:
+                        result[const.PMLP] = raw_ld_power
+                        _LOGGER.debug(
+                            "PMLP response for %s: %s",
+                            self.device.host,
+                            raw_ld_power,
+                        )
+                except asyncio.TimeoutError:
+                    _LOGGER.debug(
+                        "PMLP timeout for %s",
+                        self.device.host,
+                    )
+                except Exception as err:
+                    _LOGGER.debug(
+                        "PMLP error for %s: %s",
+                        self.device.host,
+                        err,
+                    )
+
                 # --- Picture Mode (PMPM) ---
                 # Reference command: just "PMPM" per spec, projector responds with PM + 2-byte parameter
                 try:

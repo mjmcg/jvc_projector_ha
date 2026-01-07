@@ -1,11 +1,13 @@
 {
-  "name": "Home Assistant Integration Dev",
+  "name": "Home Assistant Integration Dev (macOS)",
   "image": "ghcr.io/home-assistant/home-assistant:stable",
   "workspaceFolder": "/workspace",
+
   "mounts": [
     "source=${localWorkspaceFolder},target=/workspace,type=bind",
-    "source=${env:USERPROFILE}\\.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+    "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached"
   ],
+
   "customizations": {
     "vscode": {
       "extensions": [
@@ -23,6 +25,7 @@
       }
     }
   },
+
   "postCreateCommand": "pip install --upgrade pip && pip install homeassistant pytest pytest-cov ruff",
   "remoteUser": "root"
 }

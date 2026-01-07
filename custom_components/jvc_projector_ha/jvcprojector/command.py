@@ -40,6 +40,7 @@ IFIS: Final = "IFIS"  # Source Display (2024 spec)
 PMPM: Final = "PMPM"  # Picture Mode (2024 spec)
 PMCT: Final = "PMCT"  # Content Type (2024 spec)
 PMAT: Final = "PMAT"  # Auto transition value for Content Type (2024 spec)
+PMLP: Final = "PMLP"  # LD Power / Lamp Power (2024 spec)
 
 AUTH_SALT: Final = "JVCKWPJ"
 
@@ -262,8 +263,8 @@ class JvcCommand:
         "PMCM(.)": ["off", None, None, "low", "high", "inverse_telecine"],
         # Picture Mode - Motion Enhance
         "PMME(.)": ["off", "low", "high"],
-        # Picture Mode - Lamp Power
-        "PMLP(.)": ["normal", "high"],
+        # Picture Mode - Lamp Power (LD Power: 0=Low/109, 1=Med/219, 2=High/160)
+        "PMLP(.)": ["low", "med", "high"],
         # Picture Mode - Graphics Mode
         "PMGM(.)": ["standard", "high-res"],
         # Input Signal - HDMI Input Level
