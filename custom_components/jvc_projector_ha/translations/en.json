@@ -109,6 +109,24 @@
           "hlg": "HLG"
         }
       },
+      "jvc_colorimetry": {
+        "name": "Colorimetry",
+        "state": {
+          "no_data": "No Data",
+          "bt601": "BT.601",
+          "bt709": "BT.709",
+          "xvycc601": "xvYCC601",
+          "xvycc709": "xvYCC709",
+          "sycc601": "sYCC601",
+          "adobe_ycc601": "Adobe YCC601",
+          "adobe_rgb": "Adobe RGB",
+          "bt2020_cl": "BT.2020 Constant Luminance",
+          "bt2020_ncl": "BT.2020 Non-Constant Luminance",
+          "srgb": "sRGB",
+          "dci_p3_d65": "DCI-P3 (D65)",
+          "dci_p3_theater": "DCI-P3 (Theater)"
+        }
+      },
       "jvc_model": {
         "name": "Model"
       }

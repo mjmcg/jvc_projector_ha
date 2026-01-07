@@ -117,6 +117,28 @@ JVC_SENSORS = (
             "hlg",
         ],
     ),
+    # Colorimetry (IFCM) - Color space information from source
+    JVCSensorEntityDescription(
+        key=const.IFCM,
+        translation_key="jvc_colorimetry",
+        device_class=SensorDeviceClass.ENUM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        options=[
+            "no_data",
+            "bt601",
+            "bt709",
+            "xvycc601",
+            "xvycc709",
+            "sycc601",
+            "adobe_ycc601",
+            "adobe_rgb",
+            "bt2020_cl",
+            "bt2020_ncl",
+            "srgb",
+            "dci_p3_d65",
+            "dci_p3_theater",
+        ],
+    ),
     # Model - Projector model name
     JVCSensorEntityDescription(
         key=const.MODEL,
@@ -181,6 +203,14 @@ class JvcSensor(JvcProjectorEntity, SensorEntity):
             # Projector is off → show "No Signal" instead of Unknown
             if power in (const.STANDBY, const.COOLING):
                 return "No Signal"
+
+        # IFCM (Colorimetry) - Show "no_data" when projector is off
+        if self.entity_description.key == const.IFCM:
+            power = self.coordinator.data.get(const.POWER)
+
+            # Projector is off → show "no_data" instead of Unknown
+            if power in (const.STANDBY, const.COOLING):
+                return "no_data"
 
         # MODEL - Decode internal model codes to actual model names
         if self.entity_description.key == const.MODEL:

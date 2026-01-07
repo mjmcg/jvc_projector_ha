@@ -37,6 +37,7 @@ REMOTE: Final = "RC"
 IFLT: Final = "IFLT"  # Light Source Time (2024 spec)
 IFIN: Final = "IFIN"  # Input Display (2024 spec)
 IFIS: Final = "IFIS"  # Source Display (2024 spec)
+IFCM: Final = "IFCM"  # Colorimetry (2024 spec)
 PMPM: Final = "PMPM"  # Picture Mode (2024 spec)
 PMCT: Final = "PMCT"  # Content Type (2024 spec)
 PMAT: Final = "PMAT"  # Auto transition value for Content Type (2024 spec)
@@ -154,6 +155,22 @@ class JvcCommand:
         },
         # Light Source Time (IFLT) - Numeric data in hex, convert to decimal
         "IFLT(....)": lambda r: str(int(r[1], 16)),
+        # Colorimetry (IFCM) - Color space information from source
+        "IFCM(.)": [
+            "no_data",
+            "bt601",
+            "bt709",
+            "xvycc601",
+            "xvycc709",
+            "sycc601",
+            "adobe_ycc601",
+            "adobe_rgb",
+            "bt2020_cl",
+            "bt2020_ncl",
+            "srgb",
+            "dci_p3_d65",
+            "dci_p3_theater",
+        ],
         # Model
         "MD(.+)": lambda r: r[1].strip(),
         # Input Display (IFIN) - already handled by "(?:IP|IFIN)(.)" pattern above

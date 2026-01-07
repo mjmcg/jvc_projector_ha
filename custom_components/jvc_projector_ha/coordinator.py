@@ -182,6 +182,31 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                         err,
                     )
 
+                # --- Colorimetry (IFCM) ---
+                try:
+                    raw_colorimetry = await asyncio.wait_for(
+                        self.device.ref(command.IFCM),
+                        timeout=POLL_TIMEOUT,
+                    )
+                    if raw_colorimetry:
+                        result[const.IFCM] = raw_colorimetry
+                        _LOGGER.debug(
+                            "IFCM response for %s: %s",
+                            self.device.host,
+                            raw_colorimetry,
+                        )
+                except asyncio.TimeoutError:
+                    _LOGGER.debug(
+                        "IFCM timeout for %s",
+                        self.device.host,
+                    )
+                except Exception as err:
+                    _LOGGER.debug(
+                        "IFCM error for %s: %s",
+                        self.device.host,
+                        err,
+                    )
+
                 # --- Content Type (PMCT) ---
                 try:
                     raw_content_type = await asyncio.wait_for(

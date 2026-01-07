@@ -43,6 +43,9 @@
       "jvc_model": {
         "default": "mdi:projector"
       },
+      "jvc_colorimetry": {
+        "default": "mdi:palette"
+      },
       "jvc_source_display": {
         "default": "mdi:audio-video-off",
         "state": {
@@ -95,6 +98,9 @@
           "med": "mdi:lightbulb-on-50",
           "low": "mdi:lightbulb-on-20"
         }
+      },
+      "jvc_dynamic_ctrl": {
+        "default": "mdi:brightness-5"
       }
     }
   }
