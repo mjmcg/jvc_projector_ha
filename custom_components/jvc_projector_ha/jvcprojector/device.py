@@ -36,7 +36,7 @@ KEEPALIVE_TTL = 2
 # Delay between commands to prevent overwhelming the projector
 # Projector typically responds in ~100-150ms, but some models may need throttling
 # Reduce at your own risk - some projectors may drop commands if sent too rapidly
-# Tested working delay on an NZ500: 0.25s
+# Tested working delay on an NZ500: 0.1s
 COMMAND_THROTTLE_DELAY = 0.1  # seconds
 
 _LOGGER = logging.getLogger(__name__)
