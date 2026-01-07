@@ -6,13 +6,15 @@ A custom Home Assistant integration for JVC projectors using the [**2024 Externa
 
 The following projectors are supported:
 
-- DLA-NZ500, DLA-NZ700, DLA-NZ900
-- DLA-RS1200, DLA-RS2200
-- DLA-N788, DLA-N799, DLA-N888, DLA-N899
-- DLA-N700, DLA-N800
+- DLA-NZ500, DLA-NZ700, DLA-NZ800, DLA-NZ900
+- DLA-RS1200, DLA-RS2200, DLA-RS3200, DLA-RS4200
+- DLA-N788, DLA-N799, DLA-N888, DLA-N899, DLA-N988
+- DLA-N700, DLA-N800, DLA-N1188
+- DLA-V800R, DLA-V900R
 - DLA-Z5, DLA-Z7
 
-Additional JVC models that implement the 2024 External Command Communication Specification may also work.
+Note: There is a newer [**2025 External Command Communication Specification**](https://www.jvc.com/usa/projectors/installers-calibrators/external_command_dlanz900_series/) for the DLA-NZ800 and DLA-NZ900 models. Since the API is the same, the integration should work so I've included them in the supported models.
+
 
 ---
 
