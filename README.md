@@ -21,16 +21,21 @@ There is a newer [**2025 External Command Communication Specification**](https:/
 ## Included Entities
 
 **Controls**
-- Power On/Off control
-- Input source
-- Picture mode selection
+- Power On/Off
+- Input source (HDMI 1/2)
+- Picture mode selection (Cinema, Natural, HDR, etc.)
+- LD Power (lamp power: Low/Med/High)
+- Dynamic Control (Off/Low/High/Balanced)
 
 **Sensors**
-- Content type (SDR/HDR)
+- Power state (On/Standby/Warming/Cooling/Error)
 - Light source usage time (hours)
-- Power State (Warming Up/Cooling Down/On/Off)
-- HDMI Signal Present (Yes/No)
-- Source Display Resolution (e.g., 4K60, 1080p60)
+- HDMI signal present (binary sensor)
+- Source display resolution (e.g., 4K60, 1080p60, No Signal)
+- Input display (HDMI 1/2)
+- Content type (SDR/HDR10/HDR10+/HLG)
+- Colorimetry (BT.709, BT.2020, DCI-P3, etc.)
+- Model (projector model name)
 
 ---
 
