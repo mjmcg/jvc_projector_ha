@@ -261,6 +261,31 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                         err,
                     )
 
+                # --- Dynamic Control (PMDC) ---
+                try:
+                    raw_dynamic_ctrl = await asyncio.wait_for(
+                        self.device.ref(command.PMDC),
+                        timeout=POLL_TIMEOUT,
+                    )
+                    if raw_dynamic_ctrl:
+                        result[const.PMDC] = raw_dynamic_ctrl
+                        _LOGGER.debug(
+                            "PMDC response for %s: %s",
+                            self.device.host,
+                            raw_dynamic_ctrl,
+                        )
+                except asyncio.TimeoutError:
+                    _LOGGER.debug(
+                        "PMDC timeout for %s",
+                        self.device.host,
+                    )
+                except Exception as err:
+                    _LOGGER.debug(
+                        "PMDC error for %s: %s",
+                        self.device.host,
+                        err,
+                    )
+
                 # --- Picture Mode (PMPM) ---
                 # Reference command: just "PMPM" per spec, projector responds with PM + 2-byte parameter
                 try:

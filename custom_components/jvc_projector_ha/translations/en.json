@@ -111,14 +111,6 @@
       },
       "jvc_model": {
         "name": "Model"
-      },
-      "jvc_ld_power": {
-        "name": "LD Power",
-        "state": {
-          "low": "Low",
-          "med": "Med",
-          "high": "High"
-        }
       }
     },
     "select": {
@@ -144,6 +136,23 @@
           "filmmaker": "FILMMAKER MODE",
           "frame_adapt_hdr2": "Frame Adapt HDR 2",
           "vivid": "Vivid"
+        }
+      },
+      "jvc_ld_power": {
+        "name": "LD Power",
+        "state": {
+          "low": "Low",
+          "med": "Med",
+          "high": "High"
+        }
+      },
+      "jvc_dynamic_ctrl": {
+        "name": "Dynamic Control",
+        "state": {
+          "off": "Off",
+          "low": "Low",
+          "high": "High",
+          "balanced": "Balanced"
         }
       }
     }

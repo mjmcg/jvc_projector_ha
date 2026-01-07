@@ -51,6 +51,21 @@ CONTENT_TYPE_TO_CODE = {
     "hlg": "4",
 }
 
+# LD Power mapping from internal values to command codes (Table 3-28)
+LD_POWER_TO_CODE = {
+    "low": "0",
+    "med": "1",
+    "high": "2",
+}
+
+# Dynamic Control mapping from internal values to command codes (Table 3-25)
+DYNAMIC_CTRL_TO_CODE = {
+    "off": "0",
+    "low": "1",
+    "high": "2",
+    "balanced": "3",
+}
+
 # Picture modes available per content type (from NZ500 manual)
 CONTENT_TYPE_PICTURE_MODES = {
     "sdr": ["natural", "cinema", "vivid", "filmmaker", "sdr1", "sdr2"],
@@ -75,6 +90,22 @@ JVC_SELECTS = (
         translation_key="jvc_input_select",
         command_code=command.INPUT,
         options=[const.HDMI1, const.HDMI2],
+        entity_category=EntityCategory.CONFIG,
+    ),
+    # LD Power control
+    JVCSelectEntityDescription(
+        key=const.PMLP,
+        translation_key="jvc_ld_power",
+        command_code=command.PMLP,
+        options=list(LD_POWER_TO_CODE.keys()),
+        entity_category=EntityCategory.CONFIG,
+    ),
+    # Dynamic Control
+    JVCSelectEntityDescription(
+        key=const.PMDC,
+        translation_key="jvc_dynamic_ctrl",
+        command_code=command.PMDC,
+        options=list(DYNAMIC_CTRL_TO_CODE.keys()),
         entity_category=EntityCategory.CONFIG,
     ),
 )
@@ -118,7 +149,12 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
         power = self.coordinator.data.get(const.POWER)
 
         # Only enable these controls when projector is on
-        if self.entity_description.key in (const.INPUT, const.PMPM):
+        if self.entity_description.key in (
+            const.INPUT,
+            const.PMPM,
+            const.PMLP,
+            const.PMDC,
+        ):
             return power == const.ON
 
         return True
@@ -181,6 +217,16 @@ class JvcSelect(JvcProjectorEntity, SelectEntity):
         elif self.entity_description.key == const.INPUT:
             # Input codes: HDMI-1 = '6', HDMI-2 = '7' (from Table 3-6)
             code = "6" if option == const.HDMI1 else "7"
+        elif self.entity_description.key == const.PMLP:
+            code = LD_POWER_TO_CODE.get(option)
+            if not code:
+                _LOGGER.error("No command code for LD power: %s", option)
+                return
+        elif self.entity_description.key == const.PMDC:
+            code = DYNAMIC_CTRL_TO_CODE.get(option)
+            if not code:
+                _LOGGER.error("No command code for dynamic control: %s", option)
+                return
         else:
             _LOGGER.error("Unknown select entity: %s", self.entity_description.key)
             return

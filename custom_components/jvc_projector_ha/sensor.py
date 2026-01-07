@@ -123,18 +123,6 @@ JVC_SENSORS = (
         translation_key="jvc_model",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
-    # LD Power / Lamp Power (PMLP)
-    JVCSensorEntityDescription(
-        key=const.PMLP,
-        translation_key="jvc_ld_power",
-        device_class=SensorDeviceClass.ENUM,
-        entity_category=EntityCategory.DIAGNOSTIC,
-        options=[
-            "low",
-            "med",
-            "high",
-        ],
-    ),
 )
 
 
@@ -197,13 +185,5 @@ class JvcSensor(JvcProjectorEntity, SensorEntity):
         # MODEL - Decode internal model codes to actual model names
         if self.entity_description.key == const.MODEL:
             return decode_model(value)
-
-        # PMLP (LD Power / Lamp Power) - Only available when projector is on
-        if self.entity_description.key == const.PMLP:
-            power = self.coordinator.data.get(const.POWER)
-
-            # Projector is off → explicit None instead of unknown
-            if power in (const.STANDBY, const.COOLING):
-                return None
 
         return value

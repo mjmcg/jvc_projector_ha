@@ -41,6 +41,7 @@ PMPM: Final = "PMPM"  # Picture Mode (2024 spec)
 PMCT: Final = "PMCT"  # Content Type (2024 spec)
 PMAT: Final = "PMAT"  # Auto transition value for Content Type (2024 spec)
 PMLP: Final = "PMLP"  # LD Power / Lamp Power (2024 spec)
+PMDC: Final = "PMDC"  # Dynamic Control (2024 spec)
 
 AUTH_SALT: Final = "JVCKWPJ"
 
