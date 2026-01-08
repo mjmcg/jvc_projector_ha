@@ -165,8 +165,8 @@ class JvcCommand:
             "sycc601",
             "adobe_ycc601",
             "adobe_rgb",
-            "bt2020_cl",
-            "bt2020_ncl",
+            "bt2020(constant_luminance)",
+            "bt2020(non-constant_luminance)",
             "srgb",
             "dci_p3_d65",
             "dci_p3_theater",
@@ -343,20 +343,6 @@ class JvcCommand:
         "IFDC(.)": ["8bit", "10bit", "12bit"],
         # Function - Color Space
         "IFXV(.)": ["rgb", "yuv"],
-        # Function - Colorimetry
-        "IFCM(.)": [
-            "nodata",
-            "bt601",
-            "bt709",
-            "xvycc601",
-            "xvycc709",
-            "sycc601",
-            "adobe_ycc601",
-            "adobe_rgb",
-            "bt2020(constant_luminance)",
-            "bt2020(non-constant_luminance)",
-            "srgb",
-        ],
         # Function - HDR
         "IFHR(.)": {
             "0": "sdr",
