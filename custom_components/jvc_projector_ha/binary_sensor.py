@@ -35,7 +35,7 @@ JVC_BINARY_SENSORS = (
         translation_key="jvc_power",
         device_class=BinarySensorDeviceClass.POWER,
         entity_category=EntityCategory.DIAGNOSTIC,
-        enabled_default=False,
+        entity_registry_enabled_default=False,
         value_fn=lambda v: v in (const.ON, const.WARMING) if v else None,
     ),
     # Input signal present
@@ -45,7 +45,7 @@ JVC_BINARY_SENSORS = (
         translation_key="jvc_signal_present",
         device_class=BinarySensorDeviceClass.CONNECTIVITY,
         entity_category=EntityCategory.DIAGNOSTIC,
-        enabled_default=False,
+        entity_registry_enabled_default=False,
         value_fn=lambda v: v == const.SIGNAL if v else None,
     ),
 )
