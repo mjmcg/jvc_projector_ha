@@ -54,8 +54,8 @@ CONTENT_TYPE_TO_CODE = {
 # LD Power mapping from internal values to command codes (Table 3-28)
 LD_POWER_TO_CODE = {
     "low": "0",
-    "med": "1",
-    "high": "2",
+    "high": "1",
+    "med": "2",
 }
 
 # Dynamic Control mapping from internal values to command codes (Table 3-25)

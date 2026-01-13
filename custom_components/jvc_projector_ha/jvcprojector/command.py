@@ -281,8 +281,8 @@ class JvcCommand:
         "PMCM(.)": ["off", None, None, "low", "high", "inverse_telecine"],
         # Picture Mode - Motion Enhance
         "PMME(.)": ["off", "low", "high"],
-        # Picture Mode - Lamp Power (LD Power: 0=Low/109, 1=Med/219, 2=High/160)
-        "PMLP(.)": ["low", "med", "high"],
+        # Picture Mode - Lamp Power (LD Power: 0=Low, 1=High, 2=Med)
+        "PMLP(.)": ["low", "high", "med"],
         # Picture Mode - Dynamic Control (Table 3-25)
         "PMDC(.)": ["off", "low", "high", "balanced"],
         # Picture Mode - Graphics Mode
