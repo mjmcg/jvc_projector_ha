@@ -17,7 +17,12 @@
         "redhat.vscode-yaml"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/usr/bin/python3",
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.analysis.extraPaths": [
+          "/usr/local/lib/python3.11/site-packages",
+          "/workspace"
+        ],
+        "python.analysis.typeCheckingMode": "basic",
         "[python]": {
           "editor.defaultFormatter": "charliermarsh.ruff",
           "editor.formatOnSave": true

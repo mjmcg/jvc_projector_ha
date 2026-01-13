@@ -76,7 +76,7 @@ Configuration is performed in the Home Assistant UI.
 
 ### Generating your hashed network password
 
-1. Using the remote, set a Network Password for your projector, e.g. "MyPassword"
+1. Using the remote, set a Network Password for your projector. It must be between 8 and 10 characters long, e.g. "MyPassword"
 2. Append "JVCKWPJ" to that password, e.g. "MyPasswordJVCKWPJ"
 3. Generate the MD5 hash of that string. You can use an online tool like https://codebeautify.org/sha256-hash-generator or a command line tool.
 4. Use the resulting hash string as your password when configuring the integration in Home Assistant, e.g. "98c75d723b5bc9d638c87618bdfde6d6dffe2a5cfebf3d2f918c95e1ea2f3b40".
