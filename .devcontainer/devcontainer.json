@@ -17,11 +17,13 @@
         "redhat.vscode-yaml"
       ],
       "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python3",
         "python.analysis.autoSearchPaths": true,
         "python.analysis.useLibraryCodeForTypes": true,
         "python.analysis.extraPaths": [
           "/workspace",
-          "/workspace/custom_components"
+          "/workspace/custom_components",
+          "/usr/local/lib/python3.13/site-packages"
         ],
         "[python]": {
           "editor.defaultFormatter": "charliermarsh.ruff",
@@ -31,6 +33,6 @@
     }
   },
 
-  "postCreateCommand": "python3 -m pip install --upgrade pip && python3 -m pip install homeassistant pytest pytest-cov ruff",
+  "postCreateCommand": "/usr/local/bin/python3 -m pip install --upgrade pip && /usr/local/bin/python3 -m pip install homeassistant pytest pytest-cov ruff",
   "remoteUser": "root"
 }
