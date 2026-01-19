@@ -57,7 +57,11 @@ class JvcProjectorConfigFlow(ConfigFlow, domain=DOMAIN):
                 _LOGGER.error("Failed to connect to %s:%d - %s", host, port, err)
             except JvcProjectorAuthError:
                 errors["base"] = "invalid_auth"
-                _LOGGER.error("Authentication failed for %s:%d", host, port)
+                _LOGGER.error(
+                    "Projector at %s:%d rejected the password",
+                    host,
+                    port,
+                )
             except Exception as err:
                 errors["base"] = "unknown"
                 _LOGGER.error(

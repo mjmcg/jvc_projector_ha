@@ -165,6 +165,10 @@ class JvcDevice:
                     self._auth = auth
 
             if data == PJNAK:
+                _LOGGER.error(
+                    "Projector at %s rejected the password",
+                    self._conn.ip,
+                )
                 raise JvcProjectorAuthError
 
             if data != PJACK:
