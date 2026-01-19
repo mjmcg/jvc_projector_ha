@@ -43,7 +43,7 @@ JVC_NUMBERS = (
         native_min_value=1,
         native_max_value=100,
         native_step=1,
-        mode=NumberMode.SLIDER,
+        mode=NumberMode.AUTO,
         entity_category=EntityCategory.CONFIG,
     ),
 )
@@ -161,12 +161,12 @@ class JvcNumber(JvcProjectorEntity, NumberEntity):
             _LOGGER.error(
                 "Timeout setting %s to %d",
                 self.entity_description.key,
-                int_value,
+                protocol_value,
             )
         except Exception as err:
             _LOGGER.error(
                 "Error setting %s to %d: %s",
                 self.entity_description.key,
-                int_value,
+                protocol_value,
                 err,
             )
