@@ -142,11 +142,10 @@ class JvcNumber(JvcProjectorEntity, NumberEntity):
         )
 
         try:
-            # Send command to projector
+            # Send command to projector (op takes a single concatenated string)
             await asyncio.wait_for(
                 self.coordinator.device.op(
-                    self.entity_description.command_code,
-                    hex_value,
+                    f"{self.entity_description.command_code}{hex_value}",
                 ),
                 timeout=5.0,
             )
