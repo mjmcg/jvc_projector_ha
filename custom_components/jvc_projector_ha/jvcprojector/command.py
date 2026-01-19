@@ -41,7 +41,7 @@ IFCM: Final = "IFCM"  # Colorimetry (2024 spec)
 PMPM: Final = "PMPM"  # Picture Mode (2024 spec)
 PMCT: Final = "PMCT"  # Content Type (2024 spec)
 PMAT: Final = "PMAT"  # Auto transition value for Content Type (2024 spec)
-PMLP: Final = "PMLP"  # LD Power / Lamp Power (2024 spec)
+PMCV: Final = "PMCV"  # LD Current Value (2024 spec)
 PMDC: Final = "PMDC"  # Dynamic Control (2024 spec)
 
 AUTH_SALT: Final = "JVCKWPJ"
@@ -155,6 +155,8 @@ class JvcCommand:
         },
         # Light Source Time (IFLT) - Numeric data in hex, convert to decimal
         "IFLT(....)": lambda r: str(int(r[1], 16)),
+        # LD Current Value (PMCV) - Numeric data in hex, convert to decimal
+        "PMCV(....)": lambda r: str(int(r[1], 16)),
         # Colorimetry (IFCM) - Color space information from source
         "IFCM(.)": [
             "no_data",
@@ -281,8 +283,6 @@ class JvcCommand:
         "PMCM(.)": ["off", None, None, "low", "high", "inverse_telecine"],
         # Picture Mode - Motion Enhance
         "PMME(.)": ["off", "low", "high"],
-        # Picture Mode - Lamp Power (LD Power: 0=Low, 1=High, 2=Med)
-        "PMLP(.)": ["low", "high", "med"],
         # Picture Mode - Dynamic Control (Table 3-25)
         "PMDC(.)": ["off", "low", "high", "balanced"],
         # Picture Mode - Graphics Mode

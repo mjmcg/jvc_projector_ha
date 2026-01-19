@@ -27,7 +27,7 @@ MODEL: Final = "model"  # Projector model
 PMPM: Final = "PMPM"  # Picture Mode
 PMCT: Final = "PMCT"  # Content Type
 PMAT: Final = "PMAT"  # Auto transition value for Content Type
-PMLP: Final = "PMLP"  # LD Power (Lamp Power)
+PMCV: Final = "PMCV"  # LD Current Value
 PMDC: Final = "PMDC"  # Dynamic Control
 
 # Internal keys (for entity IDs)

@@ -156,14 +156,6 @@
           "vivid": "Vivid"
         }
       },
-      "jvc_ld_power": {
-        "name": "LD Power",
-        "state": {
-          "low": "Low",
-          "med": "Med",
-          "high": "High"
-        }
-      },
       "jvc_dynamic_ctrl": {
         "name": "Dynamic Control",
         "state": {
@@ -172,6 +164,11 @@
           "high": "High",
           "balanced": "Balanced"
         }
+      }
+    },
+    "number": {
+      "jvc_ld_power": {
+        "name": "LD Power"
       }
     }
   }

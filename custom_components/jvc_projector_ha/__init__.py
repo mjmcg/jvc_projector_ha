@@ -28,7 +28,13 @@ _LOGGER = logging.getLogger(__name__)
 # JVCConfigEntry = ConfigEntry[JvcProjectorDataUpdateCoordinator]
 JVCConfigEntry: TypeAlias = ConfigEntry[JvcProjectorDataUpdateCoordinator]
 
-PLATFORMS = [Platform.BINARY_SENSOR, Platform.REMOTE, Platform.SENSOR, Platform.SELECT]
+PLATFORMS = [
+    Platform.BINARY_SENSOR,
+    Platform.REMOTE,
+    Platform.SENSOR,
+    Platform.SELECT,
+    Platform.NUMBER,
+]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: JVCConfigEntry) -> bool:

@@ -262,27 +262,27 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
                         err,
                     )
 
-                # --- LD Power / Lamp Power (PMLP) ---
+                # --- LD Current Value (PMCV) ---
                 try:
-                    raw_ld_power = await asyncio.wait_for(
-                        self.device.ref(command.PMLP),
+                    raw_ld_current = await asyncio.wait_for(
+                        self.device.ref(command.PMCV),
                         timeout=POLL_TIMEOUT,
                     )
-                    if raw_ld_power:
-                        result[const.PMLP] = raw_ld_power
+                    if raw_ld_current is not None:
+                        result[const.PMCV] = raw_ld_current
                         _LOGGER.debug(
-                            "PMLP response for %s: %s",
+                            "PMCV response for %s: %s",
                             self.device.host,
-                            raw_ld_power,
+                            raw_ld_current,
                         )
                 except asyncio.TimeoutError:
                     _LOGGER.debug(
-                        "PMLP timeout for %s",
+                        "PMCV timeout for %s",
                         self.device.host,
                     )
                 except Exception as err:
                     _LOGGER.debug(
-                        "PMLP error for %s: %s",
+                        "PMCV error for %s: %s",
                         self.device.host,
                         err,
                     )

@@ -243,6 +243,11 @@
       "jvc_resolution": {
         "name": "Resolution"
       }
+    },
+    "number": {
+      "jvc_ld_power": {
+        "name": "LD Power"
+      }
     }
   }
 }
