@@ -22,6 +22,10 @@ from .entity import JvcProjectorEntity
 
 _LOGGER = logging.getLogger(__name__)
 
+# LD Current Value range mapping (from PMLP spec: Low=109, Med=160, High=219)
+LD_CURRENT_MIN = 109  # Minimum LD current value
+LD_CURRENT_MAX = 219  # Maximum LD current value
+
 
 @dataclass(frozen=True, kw_only=True)
 class JVCNumberEntityDescription(NumberEntityDescription):
@@ -91,17 +95,22 @@ class JvcNumber(JvcProjectorEntity, NumberEntity):
     @property
     def native_value(self) -> float | None:
         """Return the current value."""
-        # Get raw value from coordinator (0-100 range from protocol)
+        # Get raw value from coordinator (protocol range: 109-219)
         raw_value = self.coordinator.data.get(self.entity_description.key)
 
         if raw_value is None:
             return None
 
-        # Ensure value is within range
+        # Convert protocol value to HA display range (1-100)
         try:
-            value = float(raw_value)
-            # Clamp to valid range
-            return max(1, min(100, value))
+            protocol_value = float(raw_value)
+            # Clamp to valid protocol range
+            protocol_value = max(LD_CURRENT_MIN, min(LD_CURRENT_MAX, protocol_value))
+            # Map protocol range (109-219) to HA range (1-100)
+            ha_value = (
+                (protocol_value - LD_CURRENT_MIN) / (LD_CURRENT_MAX - LD_CURRENT_MIN)
+            ) * 99 + 1
+            return round(ha_value)
         except (ValueError, TypeError):
             _LOGGER.warning(
                 "Invalid %s value: %s",
@@ -112,16 +121,23 @@ class JvcNumber(JvcProjectorEntity, NumberEntity):
 
     async def async_set_native_value(self, value: float) -> None:
         """Set the LD Power value."""
-        # Convert to integer and clamp to valid range
-        int_value = int(max(1, min(100, value)))
+        # Clamp HA value to valid range (1-100)
+        ha_value = max(1, min(100, value))
+
+        # Map HA range (1-100) to protocol range (109-219)
+        protocol_value = LD_CURRENT_MIN + ((ha_value - 1) / 99) * (
+            LD_CURRENT_MAX - LD_CURRENT_MIN
+        )
+        protocol_value = int(round(protocol_value))
 
         # Convert to hex string (signed 2-byte hexadecimal, 4 characters)
-        hex_value = f"{int_value:04X}"
+        hex_value = f"{protocol_value:04X}"
 
         _LOGGER.debug(
-            "Setting %s to %d (hex: %s)",
+            "Setting %s to HA value %d (protocol value %d, hex: %s)",
             self.entity_description.key,
-            int_value,
+            int(ha_value),
+            protocol_value,
             hex_value,
         )
 
@@ -135,8 +151,8 @@ class JvcNumber(JvcProjectorEntity, NumberEntity):
                 timeout=5.0,
             )
 
-            # Update coordinator data immediately for responsiveness
-            self.coordinator.data[self.entity_description.key] = int_value
+            # Update coordinator data immediately for responsiveness (store protocol value)
+            self.coordinator.data[self.entity_description.key] = protocol_value
 
             # Request coordinator refresh to sync with actual device state
             await self.coordinator.async_request_refresh()
