@@ -94,13 +94,11 @@ Testing feedback and issue reports are welcome.
 
 ---
 
-## Project Inspiration and Credit
+## Credits & Acknowledgments
 
-This project was inspired by the community-maintained JVC Home Assistant integration:
+This integration is based on the excellent [pyjvcprojector](https://github.com/SteveEasley/pyjvcprojector) Python library by [Steve Easley](https://github.com/SteveEasley). The library provides the core communication protocol implementation for JVC D-ILA projectors over LAN. The device communication code derived from pyjvcprojector is licensed under the MIT License.
 
-https://github.com/iloveicedgreentea/jvc_homeassistant
-
-Thanks to @iloveicedgreentea for their work on JVC projectors in Home Assistant.
+This project was inspired by the community-maintained JVC Home Assistant integration: https://github.com/iloveicedgreentea/jvc_homeassistant
 
 ---
 

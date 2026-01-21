@@ -102,15 +102,8 @@ class JvcDevice:
                 else:
                     await self._disconnect()
 
-    async def connect(
-        self, get_info: bool = True, timeout: float | None = None
-    ) -> None:
-        """Connect to the projector."""
-        assert not self._conn.is_connected()
-
-        # Use provided timeout or default (timeout parameter currently unused but available for future)
-        # The connection itself uses self._conn's timeout
-
+    async def _connect(self) -> None:
+        """Internal connect method used by send()."""
         elapsed = time() - self._last
         if elapsed < 0.75:
             await asyncio.sleep(0.75 - elapsed)
@@ -185,6 +178,14 @@ class JvcDevice:
 
         self._last = time()
 
+    async def connect(
+        self, get_info: bool = True, timeout: float | None = None
+    ) -> None:
+        """Public connect method - wraps _connect with lock."""
+        async with self._lock:
+            if not self._conn.is_connected():
+                await self._connect()
+
     async def _send(self, cmd: JvcCommand) -> None:
         """Send command to device."""
         assert self._conn.is_connected()
@@ -244,8 +245,6 @@ class JvcDevice:
 
         Remote codes are operation commands (not reference), sent as RC + 4-char hex code.
         """
-        from .command import JvcCommand
-
         # Build the RC command - remote codes are operations, not references
         rc_command = JvcCommand(f"RC{code}", is_ref=False)
 
