@@ -1,3 +1,23 @@
+# This file documents the remote.send_command service parameters
+# The actual service is provided by Home Assistant's remote platform
+#
+# Example service call:
+#   service: remote.send_command
+#   target:
+#     entity_id: remote.jvc_projector
+#   data:
+#     command: menu
+#
+# Available commands:
+#   Power: standby, on
+#   Navigation: menu, up, down, left, right, ok, back
+#   Quick Access: mpc, hide, info, input, advanced_menu
+#   Picture: picture_mode, color_profile, gamma_settings, cmd, gamma, color_temp, pic_adj
+#   Presets: mode_1, mode_2, mode_3, natural, cinema
+#   Input: hdmi_1, hdmi_2
+#   Lens: lens_control, lens_ap, anamo
+#   Other: setting_memory, 3d_format
+
 info:
   name: "Info Button"
   description: "Calls the Info button"

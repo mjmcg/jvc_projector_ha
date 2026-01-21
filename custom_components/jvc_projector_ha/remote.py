@@ -39,7 +39,6 @@ class JvcProjectorRemote(JvcProjectorEntity, RemoteEntity):
 
     _attr_name = None
     _attr_has_activity = False
-    _attr_supported_features = RemoteEntityFeature.ACTIVITY
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
