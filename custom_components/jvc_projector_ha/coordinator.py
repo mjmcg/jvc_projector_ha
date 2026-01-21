@@ -45,6 +45,9 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
         self.device = device
         self.unique_id = format_mac(device.mac)
 
+        # Shared lock to prevent remote commands and polling from conflicting
+        self.command_lock = asyncio.Lock()
+
         _LOGGER.debug(
             "Initialized JVC Projector coordinator for %s (%s)",
             device.host,
@@ -58,331 +61,335 @@ class JvcProjectorDataUpdateCoordinator(DataUpdateCoordinator[dict[str, str]]):
         """
         _LOGGER.debug("Polling state from %s", self.device.host)
 
-        try:
-            # Connect only for this poll
-            await asyncio.wait_for(
-                self.device.connect(get_info=False),
-                timeout=POLL_TIMEOUT,
-            )
-
-            # Base state (PW, IP, SOURCE)
-            state = await asyncio.wait_for(
-                self.device.get_state(),
-                timeout=POLL_TIMEOUT,
-            )
-
-            # Filter out None values
-            result: dict[str, str | int] = {
-                k: v for k, v in state.items() if v is not None
-            }
-
-            # --- Model (MD) ---
-            # Fetch once - only if not already cached (doesn't change)
-            if not self.data or not self.data.get(const.MODEL):
-                try:
-                    raw_model = await asyncio.wait_for(
-                        self.device.ref(command.MODEL),
-                        timeout=POLL_TIMEOUT,
-                    )
-                    if raw_model:
-                        result[const.MODEL] = raw_model
-                        _LOGGER.debug(
-                            "MD response for %s: %s",
-                            self.device.host,
-                            raw_model,
-                        )
-                except asyncio.TimeoutError:
-                    _LOGGER.debug(
-                        "MD timeout for %s",
-                        self.device.host,
-                    )
-                except Exception as err:
-                    _LOGGER.debug(
-                        "MD error for %s: %s",
-                        self.device.host,
-                        err,
-                    )
-            else:
-                # Preserve model from previous data
-                result[const.MODEL] = self.data[const.MODEL]
-
-            power = result.get(const.POWER)
-
-            # --- Light Source Time (IFLT) ---
-            # Only valid when projector is ON
-            if power == const.ON:
-                try:
-                    raw_light_time = await asyncio.wait_for(
-                        self.device.ref(command.IFLT),
-                        timeout=POLL_TIMEOUT,
-                    )
-                    _LOGGER.debug(
-                        "IFLT response for %s: %s (type: %s)",
-                        self.device.host,
-                        raw_light_time,
-                        type(raw_light_time).__name__,
-                    )
-                    if raw_light_time and raw_light_time.isdigit():
-                        result[const.IFLT] = int(raw_light_time)
-                    elif raw_light_time:
-                        _LOGGER.warning(
-                            "IFLT response not numeric for %s: '%s'",
-                            self.device.host,
-                            raw_light_time,
-                        )
-                except Exception as err:
-                    _LOGGER.warning(
-                        "IFLT error for %s: %s",
-                        self.device.host,
-                        err,
-                    )
-
-                # --- Source Display (IFIS) ---
-                try:
-                    raw_source_display = await asyncio.wait_for(
-                        self.device.ref(command.IFIS),
-                        timeout=POLL_TIMEOUT,
-                    )
-                    if raw_source_display:
-                        result[const.IFIS] = raw_source_display
-                except asyncio.TimeoutError:
-                    _LOGGER.debug(
-                        "IFIS timeout for %s",
-                        self.device.host,
-                    )
-                except Exception as err:
-                    _LOGGER.debug(
-                        "IFIS unavailable while on for %s: %s",
-                        self.device.host,
-                        err,
-                    )
-
-                # --- Input Display (IFIN) ---
-                try:
-                    raw_input_display = await asyncio.wait_for(
-                        self.device.ref(command.IFIN),
-                        timeout=POLL_TIMEOUT,
-                    )
-                    if raw_input_display:
-                        result[const.IFIN] = raw_input_display
-                        _LOGGER.debug(
-                            "IFIN response for %s: %s",
-                            self.device.host,
-                            raw_input_display,
-                        )
-                except asyncio.TimeoutError:
-                    _LOGGER.warning(
-                        "IFIN timeout for %s",
-                        self.device.host,
-                    )
-                except Exception as err:
-                    _LOGGER.warning(
-                        "IFIN error for %s: %s",
-                        self.device.host,
-                        err,
-                    )
-
-                # --- Colorimetry (IFCM) ---
-                try:
-                    raw_colorimetry = await asyncio.wait_for(
-                        self.device.ref(command.IFCM),
-                        timeout=POLL_TIMEOUT,
-                    )
-                    if raw_colorimetry:
-                        result[const.IFCM] = raw_colorimetry
-                        _LOGGER.debug(
-                            "IFCM response for %s: %s",
-                            self.device.host,
-                            raw_colorimetry,
-                        )
-                except asyncio.TimeoutError:
-                    _LOGGER.debug(
-                        "IFCM timeout for %s",
-                        self.device.host,
-                    )
-                except Exception as err:
-                    _LOGGER.debug(
-                        "IFCM error for %s: %s",
-                        self.device.host,
-                        err,
-                    )
-
-                # --- Content Type (PMCT) ---
-                # COMMENTED OUT: Not used by any sensor or control (using PMAT instead)
-                # try:
-                #     raw_content_type = await asyncio.wait_for(
-                #         self.device.ref(command.PMCT),
-                #         timeout=POLL_TIMEOUT,
-                #     )
-                #     if raw_content_type:
-                #         result[const.PMCT] = raw_content_type
-                #         _LOGGER.debug(
-                #             "PMCT response for %s: %s",
-                #             self.device.host,
-                #             raw_content_type,
-                #         )
-                # except asyncio.TimeoutError:
-                #     _LOGGER.warning(
-                #         "PMCT timeout for %s - command may not be supported or projector is busy",
-                #         self.device.host,
-                #     )
-                # except Exception as err:
-                #     _LOGGER.warning(
-                #         "PMCT error for %s: %s",
-                #         self.device.host,
-                #         err,
-                #     )
-
-                # Store content type in diagnostic key too for comparison
-                # if const.PMCT in result:
-                #     result[const.PMCT + "_diagnostic"] = result[const.PMCT]
-
-                # --- Auto transition value for Content Type (PMAT) ---
-                try:
-                    raw_auto_content_type = await asyncio.wait_for(
-                        self.device.ref(command.PMAT),
-                        timeout=POLL_TIMEOUT,
-                    )
-                    if raw_auto_content_type:
-                        result[const.auto_content_type] = raw_auto_content_type
-                        _LOGGER.debug(
-                            "PMAT response for %s: %s",
-                            self.device.host,
-                            raw_auto_content_type,
-                        )
-                except asyncio.TimeoutError:
-                    _LOGGER.warning(
-                        "PMAT timeout for %s - command may not be supported or projector is busy",
-                        self.device.host,
-                    )
-                except Exception as err:
-                    _LOGGER.warning(
-                        "PMAT error for %s: %s",
-                        self.device.host,
-                        err,
-                    )
-
-                # --- LD Current Value (PMCV) ---
-                try:
-                    raw_ld_current = await asyncio.wait_for(
-                        self.device.ref(command.PMCV),
-                        timeout=POLL_TIMEOUT,
-                    )
-                    if raw_ld_current is not None:
-                        result[const.PMCV] = raw_ld_current
-                        _LOGGER.debug(
-                            "PMCV response for %s: %s",
-                            self.device.host,
-                            raw_ld_current,
-                        )
-                except asyncio.TimeoutError:
-                    _LOGGER.debug(
-                        "PMCV timeout for %s",
-                        self.device.host,
-                    )
-                except Exception as err:
-                    _LOGGER.debug(
-                        "PMCV error for %s: %s",
-                        self.device.host,
-                        err,
-                    )
-
-                # --- Dynamic Control (PMDC) ---
-                try:
-                    raw_dynamic_ctrl = await asyncio.wait_for(
-                        self.device.ref(command.PMDC),
-                        timeout=POLL_TIMEOUT,
-                    )
-                    if raw_dynamic_ctrl:
-                        result[const.PMDC] = raw_dynamic_ctrl
-                        _LOGGER.debug(
-                            "PMDC response for %s: %s",
-                            self.device.host,
-                            raw_dynamic_ctrl,
-                        )
-                except asyncio.TimeoutError:
-                    _LOGGER.debug(
-                        "PMDC timeout for %s",
-                        self.device.host,
-                    )
-                except Exception as err:
-                    _LOGGER.debug(
-                        "PMDC error for %s: %s",
-                        self.device.host,
-                        err,
-                    )
-
-                # --- Picture Mode (PMPM) ---
-                # Reference command: just "PMPM" per spec, projector responds with PM + 2-byte parameter
-                try:
-                    raw_picture_mode = await asyncio.wait_for(
-                        self.device.ref(command.PMPM),
-                        timeout=POLL_TIMEOUT,
-                    )
-                    if raw_picture_mode:
-                        result[const.PMPM] = raw_picture_mode
-                        _LOGGER.debug(
-                            "PMPM response for %s: %s",
-                            self.device.host,
-                            raw_picture_mode,
-                        )
-                except asyncio.TimeoutError:
-                    _LOGGER.warning(
-                        "PMPM timeout for %s - command may not be supported or projector is busy",
-                        self.device.host,
-                    )
-                except Exception as err:
-                    _LOGGER.warning(
-                        "PMPM error for %s: %s",
-                        self.device.host,
-                        err,
-                    )
-            else:
-                # Projector is off → skip IFLT poll, show power_off state
-                result[const.IFLT] = "power_off"
-                _LOGGER.debug(
-                    "Skipping IFLT poll for %s (power=%s)",
-                    self.device.host,
-                    power,
+        # Use the shared lock to prevent conflicts with remote commands
+        async with self.command_lock:
+            try:
+                # Connect only for this poll
+                await asyncio.wait_for(
+                    self.device.connect(get_info=False),
+                    timeout=POLL_TIMEOUT,
                 )
 
-            _LOGGER.debug(
-                "State from %s: power=%s input=%s signal=%s iflt=%s ifis=%s picture_mode=%s",
-                self.device.host,
-                result.get(const.POWER),
-                result.get(const.INPUT),
-                result.get(const.SOURCE),
-                result.get(const.IFLT),
-                result.get(const.IFIS),
-                result.get(const.PMPM),
-            )
+                # Base state (PW, IP, SOURCE)
+                state = await asyncio.wait_for(
+                    self.device.get_state(),
+                    timeout=POLL_TIMEOUT,
+                )
 
-            return result
+                # Filter out None values
+                result: dict[str, str | int] = {
+                    k: v for k, v in state.items() if v is not None
+                }
 
-        except asyncio.TimeoutError:
-            _LOGGER.warning("Timeout polling %s", self.device.host)
-            raise UpdateFailed("Timeout polling projector")
+                # --- Model (MD) ---
+                # Fetch once - only if not already cached (doesn't change)
+                if not self.data or not self.data.get(const.MODEL):
+                    try:
+                        raw_model = await asyncio.wait_for(
+                            self.device.ref(command.MODEL),
+                            timeout=POLL_TIMEOUT,
+                        )
+                        if raw_model:
+                            result[const.MODEL] = raw_model
+                            _LOGGER.debug(
+                                "MD response for %s: %s",
+                                self.device.host,
+                                raw_model,
+                            )
+                    except asyncio.TimeoutError:
+                        _LOGGER.debug(
+                            "MD timeout for %s",
+                            self.device.host,
+                        )
+                    except Exception as err:
+                        _LOGGER.debug(
+                            "MD error for %s: %s",
+                            self.device.host,
+                            err,
+                        )
+                else:
+                    # Preserve model from previous data
+                    result[const.MODEL] = self.data[const.MODEL]
 
-        except JvcProjectorAuthError as err:
-            _LOGGER.error("Authentication failed for %s", self.device.host)
-            raise ConfigEntryAuthFailed("Password authentication failed") from err
+                power = result.get(const.POWER)
 
-        except JvcProjectorConnectError as err:
-            _LOGGER.warning("Connection error polling %s: %s", self.device.host, err)
-            raise UpdateFailed("Connection error polling projector") from err
+                # --- Light Source Time (IFLT) ---
+                # Only valid when projector is ON
+                if power == const.ON:
+                    try:
+                        raw_light_time = await asyncio.wait_for(
+                            self.device.ref(command.IFLT),
+                            timeout=POLL_TIMEOUT,
+                        )
+                        _LOGGER.debug(
+                            "IFLT response for %s: %s (type: %s)",
+                            self.device.host,
+                            raw_light_time,
+                            type(raw_light_time).__name__,
+                        )
+                        if raw_light_time and raw_light_time.isdigit():
+                            result[const.IFLT] = int(raw_light_time)
+                        elif raw_light_time:
+                            _LOGGER.warning(
+                                "IFLT response not numeric for %s: '%s'",
+                                self.device.host,
+                                raw_light_time,
+                            )
+                    except Exception as err:
+                        _LOGGER.warning(
+                            "IFLT error for %s: %s",
+                            self.device.host,
+                            err,
+                        )
 
-        except Exception as err:
-            _LOGGER.error(
-                "Unexpected error polling %s: %s",
-                self.device.host,
-                err,
-                exc_info=True,
-            )
-            raise UpdateFailed(f"Unexpected error: {err}")
+                    # --- Source Display (IFIS) ---
+                    try:
+                        raw_source_display = await asyncio.wait_for(
+                            self.device.ref(command.IFIS),
+                            timeout=POLL_TIMEOUT,
+                        )
+                        if raw_source_display:
+                            result[const.IFIS] = raw_source_display
+                    except asyncio.TimeoutError:
+                        _LOGGER.debug(
+                            "IFIS timeout for %s",
+                            self.device.host,
+                        )
+                    except Exception as err:
+                        _LOGGER.debug(
+                            "IFIS unavailable while on for %s: %s",
+                            self.device.host,
+                            err,
+                        )
 
-        finally:
-            # Always disconnect — projector prefers short sessions
-            try:
-                await self.device.disconnect()
-            except Exception:
-                pass
+                    # --- Input Display (IFIN) ---
+                    try:
+                        raw_input_display = await asyncio.wait_for(
+                            self.device.ref(command.IFIN),
+                            timeout=POLL_TIMEOUT,
+                        )
+                        if raw_input_display:
+                            result[const.IFIN] = raw_input_display
+                            _LOGGER.debug(
+                                "IFIN response for %s: %s",
+                                self.device.host,
+                                raw_input_display,
+                            )
+                    except asyncio.TimeoutError:
+                        _LOGGER.warning(
+                            "IFIN timeout for %s",
+                            self.device.host,
+                        )
+                    except Exception as err:
+                        _LOGGER.warning(
+                            "IFIN error for %s: %s",
+                            self.device.host,
+                            err,
+                        )
+
+                    # --- Colorimetry (IFCM) ---
+                    try:
+                        raw_colorimetry = await asyncio.wait_for(
+                            self.device.ref(command.IFCM),
+                            timeout=POLL_TIMEOUT,
+                        )
+                        if raw_colorimetry:
+                            result[const.IFCM] = raw_colorimetry
+                            _LOGGER.debug(
+                                "IFCM response for %s: %s",
+                                self.device.host,
+                                raw_colorimetry,
+                            )
+                    except asyncio.TimeoutError:
+                        _LOGGER.debug(
+                            "IFCM timeout for %s",
+                            self.device.host,
+                        )
+                    except Exception as err:
+                        _LOGGER.debug(
+                            "IFCM error for %s: %s",
+                            self.device.host,
+                            err,
+                        )
+
+                    # --- Content Type (PMCT) ---
+                    # COMMENTED OUT: Not used by any sensor or control (using PMAT instead)
+                    # try:
+                    #     raw_content_type = await asyncio.wait_for(
+                    #         self.device.ref(command.PMCT),
+                    #         timeout=POLL_TIMEOUT,
+                    #     )
+                    #     if raw_content_type:
+                    #         result[const.PMCT] = raw_content_type
+                    #         _LOGGER.debug(
+                    #             "PMCT response for %s: %s",
+                    #             self.device.host,
+                    #             raw_content_type,
+                    #         )
+                    # except asyncio.TimeoutError:
+                    #     _LOGGER.warning(
+                    #         "PMCT timeout for %s - command may not be supported or projector is busy",
+                    #         self.device.host,
+                    #     )
+                    # except Exception as err:
+                    #     _LOGGER.warning(
+                    #         "PMCT error for %s: %s",
+                    #         self.device.host,
+                    #         err,
+                    #     )
+
+                    # Store content type in diagnostic key too for comparison
+                    # if const.PMCT in result:
+                    #     result[const.PMCT + "_diagnostic"] = result[const.PMCT]
+
+                    # --- Auto transition value for Content Type (PMAT) ---
+                    try:
+                        raw_auto_content_type = await asyncio.wait_for(
+                            self.device.ref(command.PMAT),
+                            timeout=POLL_TIMEOUT,
+                        )
+                        if raw_auto_content_type:
+                            result[const.auto_content_type] = raw_auto_content_type
+                            _LOGGER.debug(
+                                "PMAT response for %s: %s",
+                                self.device.host,
+                                raw_auto_content_type,
+                            )
+                    except asyncio.TimeoutError:
+                        _LOGGER.warning(
+                            "PMAT timeout for %s - command may not be supported or projector is busy",
+                            self.device.host,
+                        )
+                    except Exception as err:
+                        _LOGGER.warning(
+                            "PMAT error for %s: %s",
+                            self.device.host,
+                            err,
+                        )
+
+                    # --- LD Current Value (PMCV) ---
+                    try:
+                        raw_ld_current = await asyncio.wait_for(
+                            self.device.ref(command.PMCV),
+                            timeout=POLL_TIMEOUT,
+                        )
+                        if raw_ld_current is not None:
+                            result[const.PMCV] = raw_ld_current
+                            _LOGGER.debug(
+                                "PMCV response for %s: %s",
+                                self.device.host,
+                                raw_ld_current,
+                            )
+                    except asyncio.TimeoutError:
+                        _LOGGER.debug(
+                            "PMCV timeout for %s",
+                            self.device.host,
+                        )
+                    except Exception as err:
+                        _LOGGER.debug(
+                            "PMCV error for %s: %s",
+                            self.device.host,
+                            err,
+                        )
+
+                    # --- Dynamic Control (PMDC) ---
+                    try:
+                        raw_dynamic_ctrl = await asyncio.wait_for(
+                            self.device.ref(command.PMDC),
+                            timeout=POLL_TIMEOUT,
+                        )
+                        if raw_dynamic_ctrl:
+                            result[const.PMDC] = raw_dynamic_ctrl
+                            _LOGGER.debug(
+                                "PMDC response for %s: %s",
+                                self.device.host,
+                                raw_dynamic_ctrl,
+                            )
+                    except asyncio.TimeoutError:
+                        _LOGGER.debug(
+                            "PMDC timeout for %s",
+                            self.device.host,
+                        )
+                    except Exception as err:
+                        _LOGGER.debug(
+                            "PMDC error for %s: %s",
+                            self.device.host,
+                            err,
+                        )
+
+                    # --- Picture Mode (PMPM) ---
+                    # Reference command: just "PMPM" per spec, projector responds with PM + 2-byte parameter
+                    try:
+                        raw_picture_mode = await asyncio.wait_for(
+                            self.device.ref(command.PMPM),
+                            timeout=POLL_TIMEOUT,
+                        )
+                        if raw_picture_mode:
+                            result[const.PMPM] = raw_picture_mode
+                            _LOGGER.debug(
+                                "PMPM response for %s: %s",
+                                self.device.host,
+                                raw_picture_mode,
+                            )
+                    except asyncio.TimeoutError:
+                        _LOGGER.warning(
+                            "PMPM timeout for %s - command may not be supported or projector is busy",
+                            self.device.host,
+                        )
+                    except Exception as err:
+                        _LOGGER.warning(
+                            "PMPM error for %s: %s",
+                            self.device.host,
+                            err,
+                        )
+                else:
+                    # Projector is off → skip IFLT poll, show power_off state
+                    result[const.IFLT] = "power_off"
+                    _LOGGER.debug(
+                        "Skipping IFLT poll for %s (power=%s)",
+                        self.device.host,
+                        power,
+                    )
+
+                _LOGGER.debug(
+                    "State from %s: power=%s input=%s signal=%s iflt=%s ifis=%s picture_mode=%s",
+                    self.device.host,
+                    result.get(const.POWER),
+                    result.get(const.INPUT),
+                    result.get(const.SOURCE),
+                    result.get(const.IFLT),
+                    result.get(const.IFIS),
+                    result.get(const.PMPM),
+                )
+
+                return result
+
+            except asyncio.TimeoutError:
+                _LOGGER.warning("Timeout polling %s", self.device.host)
+                raise UpdateFailed("Timeout polling projector")
+
+            except JvcProjectorAuthError as err:
+                _LOGGER.error("Authentication failed for %s", self.device.host)
+                raise ConfigEntryAuthFailed("Password authentication failed") from err
+
+            except JvcProjectorConnectError as err:
+                _LOGGER.warning(
+                    "Connection error polling %s: %s", self.device.host, err
+                )
+                raise UpdateFailed("Connection error polling projector") from err
+
+            except Exception as err:
+                _LOGGER.error(
+                    "Unexpected error polling %s: %s",
+                    self.device.host,
+                    err,
+                    exc_info=True,
+                )
+                raise UpdateFailed(f"Unexpected error: {err}")
+
+            finally:
+                # Always disconnect — projector prefers short sessions
+                try:
+                    await self.device.disconnect()
+                except Exception:
+                    pass

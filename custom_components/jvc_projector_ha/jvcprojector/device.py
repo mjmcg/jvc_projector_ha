@@ -50,6 +50,7 @@ class JvcDevice:
     ) -> None:
         """Initialize class."""
         self._conn = JvcConnection(ip, port, timeout)
+        self._timeout = timeout  # Store timeout for later use
 
         self._auth = b""
         if password:
@@ -101,9 +102,14 @@ class JvcDevice:
                 else:
                     await self._disconnect()
 
-    async def _connect(self) -> None:
-        """Connect to device."""
+    async def connect(
+        self, get_info: bool = True, timeout: float | None = None
+    ) -> None:
+        """Connect to the projector."""
         assert not self._conn.is_connected()
+
+        # Use provided timeout or default (timeout parameter currently unused but available for future)
+        # The connection itself uses self._conn's timeout
 
         elapsed = time() - self._last
         if elapsed < 0.75:
@@ -232,6 +238,19 @@ class JvcDevice:
                 _LOGGER.warning("Failed to decode response '%s'", data)
 
         cmd.ack = True
+
+    async def remote(self, code: str, timeout: float | None = None) -> None:
+        """Send a remote control code.
+
+        Remote codes are operation commands (not reference), sent as RC + 4-char hex code.
+        """
+        from .command import JvcCommand
+
+        # Build the RC command - remote codes are operations, not references
+        rc_command = JvcCommand(f"RC{code}", is_ref=False)
+
+        # Use the standard send() method which handles locking, connection, etc.
+        await self.send([rc_command])
 
     async def disconnect(self) -> None:
         """Disconnect from device."""

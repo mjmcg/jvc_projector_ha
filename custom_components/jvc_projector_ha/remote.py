@@ -42,7 +42,6 @@ class JvcProjectorRemote(JvcProjectorEntity, RemoteEntity):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._command_lock = asyncio.Lock()
         self._last_command_time: datetime | None = None
         self._current_activity: str | None = None
 
@@ -88,58 +87,45 @@ class JvcProjectorRemote(JvcProjectorEntity, RemoteEntity):
             self.async_write_ha_state()
             return
 
-        # Otherwise, power on the projector
-        async with self._command_lock:
+        # Use coordinator's lock to prevent conflicts with polling
+        async with self.coordinator.command_lock:
             _LOGGER.debug("Power ON for %s", self.device.host)
 
             await self._guard_if_needed(POWER_COMMAND_GUARD)
 
             try:
-                await self.device.connect(get_info=False)
                 await self.device.power_on()
 
                 # Give the projector a moment to transition to WARMING
                 await asyncio.sleep(0.3)
 
-                # Force HA to re-read PW immediately
-                await self.coordinator.async_refresh()
-
             except JvcProjectorConnectError as err:
                 _LOGGER.error("Power ON failed: %s", err)
                 raise
 
-            finally:
-                try:
-                    await self.device.disconnect()
-                except Exception:
-                    pass
+        # Force HA to re-read PW immediately (outside the lock)
+        await self.coordinator.async_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the projector off"""
-        async with self._command_lock:
+        # Use coordinator's lock to prevent conflicts with polling
+        async with self.coordinator.command_lock:
             _LOGGER.debug("Power OFF for %s", self.device.host)
 
             await self._guard_if_needed(POWER_COMMAND_GUARD)
 
             try:
-                await self.device.connect(get_info=False)
                 await self.device.power_off()
 
                 # Give the projector a moment to transition to COOLING
                 await asyncio.sleep(0.3)
 
-                # Force HA to re-read PW immediately
-                await self.coordinator.async_refresh()
-
             except JvcProjectorConnectError as err:
                 _LOGGER.error("Power OFF failed: %s", err)
                 raise
 
-            finally:
-                try:
-                    await self.device.disconnect()
-                except Exception:
-                    pass
+        # Force HA to re-read PW immediately (outside the lock)
+        await self.coordinator.async_refresh()
 
     async def async_send_command(
         self,
@@ -161,58 +147,50 @@ class JvcProjectorRemote(JvcProjectorEntity, RemoteEntity):
         mode_2, mode_3, hdmi_1, hdmi_2, lens_ap, anamo, gamma,
         color_temp, 3d_format, pic_adj, natural, cinema
         """
-        async with self._command_lock:
-            try:
-                await self.device.connect(get_info=False)
+        # Use coordinator's lock to prevent conflicts with polling
+        async with self.coordinator.command_lock:
+            for cmd in command:
+                # Normalize command to lowercase for lookup
+                cmd_lower = cmd.lower()
 
-                for cmd in command:
-                    # Normalize command to lowercase for lookup
-                    cmd_lower = cmd.lower()
-
-                    # Try user-friendly button name first
-                    if cmd_lower in REMOTE_BUTTON_MAP:
-                        key_code = REMOTE_BUTTON_MAP[cmd_lower]
-                        key_name = cmd_lower
-                    # Try REMOTE_* constant name (strip prefix if present)
-                    elif cmd_lower.startswith("remote_"):
-                        button_name = cmd_lower[7:]  # Remove "remote_" prefix
-                        if button_name in REMOTE_BUTTON_MAP:
-                            key_code = REMOTE_BUTTON_MAP[button_name]
-                            key_name = button_name
-                        else:
-                            raise ValueError(f"Unknown remote button: {cmd}")
-                    # Try as REMOTE_* constant (uppercase)
-                    elif hasattr(const, cmd.upper()):
-                        key_code = getattr(const, cmd.upper())
-                        key_name = cmd.upper()
-                    # Try as raw hex code (4 characters)
-                    elif len(cmd) == 4 and all(
-                        c in "0123456789ABCDEFabcdef" for c in cmd
-                    ):
-                        key_code = cmd.upper()
-                        key_name = f"RAW({key_code})"
+                # Try user-friendly button name first
+                if cmd_lower in REMOTE_BUTTON_MAP:
+                    key_code = REMOTE_BUTTON_MAP[cmd_lower]
+                    key_name = cmd_lower
+                # Try REMOTE_* constant name (strip prefix if present)
+                elif cmd_lower.startswith("remote_"):
+                    button_name = cmd_lower[7:]  # Remove "remote_" prefix
+                    if button_name in REMOTE_BUTTON_MAP:
+                        key_code = REMOTE_BUTTON_MAP[button_name]
+                        key_name = button_name
                     else:
-                        raise ValueError(f"Unknown remote command: {cmd}")
+                        raise ValueError(f"Unknown remote button: {cmd}")
+                # Try as REMOTE_* constant (uppercase)
+                elif hasattr(const, cmd.upper()):
+                    key_code = getattr(const, cmd.upper())
+                    key_name = cmd.upper()
+                # Try as raw hex code (4 characters)
+                elif len(cmd) == 4 and all(c in "0123456789ABCDEFabcdef" for c in cmd):
+                    key_code = cmd.upper()
+                    key_name = f"RAW({key_code})"
+                else:
+                    raise ValueError(f"Unknown remote command: {cmd}")
 
-                    _LOGGER.debug(
-                        "Sending remote key %s (%s) to %s",
-                        key_name,
-                        key_code,
-                        self.device.host,
-                    )
+                _LOGGER.debug(
+                    "Sending remote key %s (%s) to %s",
+                    key_name,
+                    key_code,
+                    self.device.host,
+                )
 
-                    await self._guard_if_needed(COMMAND_GUARD)
-                    await self.device.remote(key_code)
+                await self._guard_if_needed(COMMAND_GUARD)
 
-                    # Update current activity to last sent command
-                    if cmd_lower in REMOTE_BUTTON_MAP:
-                        self._current_activity = cmd_lower
-
-            except JvcProjectorConnectError as err:
-                _LOGGER.error("Remote command failed: %s", err)
-                raise
-            finally:
                 try:
-                    await self.device.disconnect()
-                except Exception:
-                    pass
+                    await self.device.remote(key_code)
+                except JvcProjectorConnectError as err:
+                    _LOGGER.error("Remote command failed: %s", err)
+                    raise
+
+                # Update current activity to last sent command
+                if cmd_lower in REMOTE_BUTTON_MAP:
+                    self._current_activity = cmd_lower
