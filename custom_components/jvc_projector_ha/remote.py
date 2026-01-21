@@ -64,12 +64,6 @@ class JvcProjectorRemote(JvcProjectorEntity, RemoteEntity):
         """Return list of available remote buttons."""
         return list(REMOTE_BUTTON_MAP.keys())
 
-    async def async_turn_on_activity(self, activity: str, **kwargs: Any) -> None:
-        """Send a remote command when an activity is selected."""
-        await self.async_send_command([activity])
-        self._current_activity = activity
-        self.async_write_ha_state()
-
     async def _guard_if_needed(self, min_delay: float) -> None:
         """
         Apply delay ONLY if the previous command was very recent.
@@ -84,8 +78,17 @@ class JvcProjectorRemote(JvcProjectorEntity, RemoteEntity):
 
         self._last_command_time = datetime.now()
 
-    async def async_turn_on(self, **kwargs: Any) -> None:
-        """Turn the projector on"""
+    async def async_turn_on(self, activity: str | None = None, **kwargs: Any) -> None:
+        """Turn the projector on or send a remote command via activity."""
+        # If an activity is specified, send that remote command instead of power on
+        if activity is not None:
+            _LOGGER.debug("Activity selected: %s", activity)
+            await self.async_send_command([activity])
+            self._current_activity = activity
+            self.async_write_ha_state()
+            return
+
+        # Otherwise, power on the projector
         async with self._command_lock:
             _LOGGER.debug("Power ON for %s", self.device.host)
 
