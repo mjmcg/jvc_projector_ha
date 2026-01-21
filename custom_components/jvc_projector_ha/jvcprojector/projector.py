@@ -191,6 +191,7 @@ class JvcProjector:
         if self._device is None:
             await self.connect(False)
 
+        assert self._device is not None
         await self._device.send(cmds)
         return [cmd.response for cmd in cmds]
 
