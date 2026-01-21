@@ -1,0 +1,229 @@
+# Example Lovelace card for JVC Projector virtual remote
+# Copy this to your dashboard configuration
+#
+# Requires: button-card from HACS (optional, for better styling)
+# Basic version uses standard HA buttons
+
+type: vertical-stack
+cards:
+  # Power row
+  - type: horizontal-stack
+    cards:
+      - type: button
+        name: "On"
+        icon: mdi:power
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: "on"
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: "Standby"
+        icon: mdi:power-standby
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: standby
+          target:
+            entity_id: remote.jvc_projector
+
+  # Navigation pad
+  - type: grid
+    columns: 3
+    square: true
+    cards:
+      - type: button
+        name: ""
+        icon: mdi:menu
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: menu
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: ""
+        icon: mdi:chevron-up
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: up
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: ""
+        icon: mdi:information-outline
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: info
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: ""
+        icon: mdi:chevron-left
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: left
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: "OK"
+        icon: mdi:checkbox-blank-circle-outline
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: ok
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: ""
+        icon: mdi:chevron-right
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: right
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: ""
+        icon: mdi:keyboard-backspace
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: back
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: ""
+        icon: mdi:chevron-down
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: down
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: ""
+        icon: mdi:eye-off-outline
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: hide
+          target:
+            entity_id: remote.jvc_projector
+
+  # Quick access row
+  - type: horizontal-stack
+    cards:
+      - type: button
+        name: "Input"
+        icon: mdi:import
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: input
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: "Picture"
+        icon: mdi:image-filter-hdr
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: picture_mode
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: "Lens"
+        icon: mdi:camera-iris
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: lens_control
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: "MPC"
+        icon: mdi:tune
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: mpc
+          target:
+            entity_id: remote.jvc_projector
+
+  # Input selection row
+  - type: horizontal-stack
+    cards:
+      - type: button
+        name: "HDMI 1"
+        icon: mdi:video-input-hdmi
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: hdmi_1
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: "HDMI 2"
+        icon: mdi:video-input-hdmi
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: hdmi_2
+          target:
+            entity_id: remote.jvc_projector
+
+  # Memory presets
+  - type: horizontal-stack
+    cards:
+      - type: button
+        name: "Mode 1"
+        icon: mdi:numeric-1-box
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: mode_1
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: "Mode 2"
+        icon: mdi:numeric-2-box
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: mode_2
+          target:
+            entity_id: remote.jvc_projector
+      - type: button
+        name: "Mode 3"
+        icon: mdi:numeric-3-box
+        tap_action:
+          action: call-service
+          service: remote.send_command
+          data:
+            command: mode_3
+          target:
+            entity_id: remote.jvc_projector
