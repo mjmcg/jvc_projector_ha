@@ -4,3 +4,55 @@ info:
   target:
     entity:
       domain: remote
+
+send_command:
+  name: Send Remote Command
+  description: Send a remote control command to the JVC projector.
+  target:
+    entity:
+      integration: jvc_projector_ha
+      domain: remote
+  fields:
+    command:
+      name: Command
+      description: >
+        Remote button to press. Can be a button name (menu, up, down, left, right, ok, back, etc.),
+        a REMOTE_* constant name, or a raw 4-character hex code.
+      required: true
+      example: "menu"
+      selector:
+        select:
+          options:
+            - standby
+            - "on"
+            - menu
+            - up
+            - down
+            - left
+            - right
+            - ok
+            - back
+            - mpc
+            - hide
+            - info
+            - input
+            - advanced_menu
+            - picture_mode
+            - color_profile
+            - lens_control
+            - setting_memory
+            - gamma_settings
+            - cmd
+            - mode_1
+            - mode_2
+            - mode_3
+            - hdmi_1
+            - hdmi_2
+            - lens_ap
+            - anamo
+            - gamma
+            - color_temp
+            - 3d_format
+            - pic_adj
+            - natural
+            - cinema

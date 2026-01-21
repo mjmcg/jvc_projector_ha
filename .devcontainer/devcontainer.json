@@ -1,12 +1,12 @@
 {
-  "name": "Home Assistant Integration Dev (Windows)",
+  "name": "Home Assistant Integration Dev",
   "image": "ghcr.io/home-assistant/home-assistant:stable",
   "workspaceFolder": "/workspace",
+
   "mounts": [
-    "source=${localWorkspaceFolder},target=/workspace,type=bind",
-    "source=${env:USERPROFILE}\\.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached".
-    "source=${env:USERPROFILE}\\.ssh,target=/root/.ssh,type=bind,consistency=cached"
-    ],
+    "source=${localWorkspaceFolder},target=/workspace,type=bind"
+  ],
+
   "customizations": {
     "vscode": {
       "extensions": [
@@ -16,14 +16,22 @@
         "redhat.vscode-yaml"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/usr/bin/python3",
+        "python.defaultInterpreterPath": "/usr/local/bin/python3",
+        "python.analysis.autoSearchPaths": true,
+        "python.analysis.useLibraryCodeForTypes": true,
+        "python.analysis.extraPaths": [
+          "/workspace",
+          "/workspace/custom_components",
+          "/usr/src/homeassistant"
+        ],
         "[python]": {
           "editor.defaultFormatter": "charliermarsh.ruff",
           "editor.formatOnSave": true
-        }
       }
     }
   },
-  "postCreateCommand": "pip install --upgrade pip && pip install homeassistant pytest pytest-cov ruff",
+
+  "postCreateCommand": "/usr/local/bin/python3 -m pip install --upgrade pip && /usr/local/bin/python3 -m pip install homeassistant pytest pytest-cov ruff",
+
   "remoteUser": "root"
 }

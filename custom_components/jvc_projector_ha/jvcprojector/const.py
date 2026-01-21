@@ -33,6 +33,9 @@ PMDC: Final = "PMDC"  # Dynamic Control
 # Internal keys (for entity IDs)
 auto_content_type: Final = "auto_content_type"  # Maps to PMAT
 
+# Remote Control Codes (IR pass-through)
+REMOTE_STANDBY: Final = "7306"
+REMOTE_ON: Final = "7305"
 REMOTE_MENU: Final = "732E"
 REMOTE_UP: Final = "7301"
 REMOTE_DOWN: Final = "7302"
@@ -64,3 +67,40 @@ REMOTE_3D_FORMAT: Final = "73D6"
 REMOTE_PIC_ADJ: Final = "7372"
 REMOTE_NATURAL: Final = "736A"
 REMOTE_CINEMA: Final = "7368"
+
+# Mapping of user-friendly button names to remote codes
+REMOTE_BUTTON_MAP: Final = {
+    "standby": REMOTE_STANDBY,
+    "on": REMOTE_ON,
+    "menu": REMOTE_MENU,
+    "up": REMOTE_UP,
+    "down": REMOTE_DOWN,
+    "left": REMOTE_LEFT,
+    "right": REMOTE_RIGHT,
+    "ok": REMOTE_OK,
+    "back": REMOTE_BACK,
+    "mpc": REMOTE_MPC,
+    "hide": REMOTE_HIDE,
+    "info": REMOTE_INFO,
+    "input": REMOTE_INPUT,
+    "advanced_menu": REMOTE_ADVANCED_MENU,
+    "picture_mode": REMOTE_PICTURE_MODE,
+    "color_profile": REMOTE_COLOR_PROFILE,
+    "lens_control": REMOTE_LENS_CONTROL,
+    "setting_memory": REMOTE_SETTING_MEMORY,
+    "gamma_settings": REMOTE_GAMMA_SETTINGS,
+    "cmd": REMOTE_CMD,
+    "mode_1": REMOTE_MODE_1,
+    "mode_2": REMOTE_MODE_2,
+    "mode_3": REMOTE_MODE_3,
+    "hdmi_1": REMOTE_HDMI_1,
+    "hdmi_2": REMOTE_HDMI_2,
+    "lens_ap": REMOTE_LENS_AP,
+    "anamo": REMOTE_ANAMO,
+    "gamma": REMOTE_GAMMA,
+    "color_temp": REMOTE_COLOR_TEMP,
+    "3d_format": REMOTE_3D_FORMAT,
+    "pic_adj": REMOTE_PIC_ADJ,
+    "natural": REMOTE_NATURAL,
+    "cinema": REMOTE_CINEMA,
+}
