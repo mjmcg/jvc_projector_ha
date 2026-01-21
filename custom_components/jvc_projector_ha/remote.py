@@ -38,12 +38,13 @@ class JvcProjectorRemote(JvcProjectorEntity, RemoteEntity):
     """JVC Projector remote control (2024 LAN spec)."""
 
     _attr_name = None
-    _attr_has_activity = False
+    _attr_supported_features = RemoteEntityFeature.ACTIVITY
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._command_lock = asyncio.Lock()
         self._last_command_time: datetime | None = None
+        self._current_activity: str | None = None
 
     @property
     def is_on(self) -> bool:
@@ -54,9 +55,20 @@ class JvcProjectorRemote(JvcProjectorEntity, RemoteEntity):
         )
 
     @property
+    def current_activity(self) -> str | None:
+        """Return the last sent remote command."""
+        return self._current_activity
+
+    @property
     def activity_list(self) -> list[str]:
         """Return list of available remote buttons."""
         return list(REMOTE_BUTTON_MAP.keys())
+
+    async def async_turn_on_activity(self, activity: str, **kwargs: Any) -> None:
+        """Send a remote command when an activity is selected."""
+        await self.async_send_command([activity])
+        self._current_activity = activity
+        self.async_write_ha_state()
 
     async def _guard_if_needed(self, min_delay: float) -> None:
         """
@@ -188,6 +200,10 @@ class JvcProjectorRemote(JvcProjectorEntity, RemoteEntity):
 
                     await self._guard_if_needed(COMMAND_GUARD)
                     await self.device.remote(key_code)
+
+                    # Update current activity to last sent command
+                    if cmd_lower in REMOTE_BUTTON_MAP:
+                        self._current_activity = cmd_lower
 
             except JvcProjectorConnectError as err:
                 _LOGGER.error("Remote command failed: %s", err)
