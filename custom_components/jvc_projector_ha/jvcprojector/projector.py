@@ -73,19 +73,20 @@ class JvcProjector:
     @property
     def version(self) -> str | None:
         """Get device software version."""
-        #if not self._version:
+        # if not self._version:
         #    raise JvcProjectorError("version address not initialized")
         return self._version or None
 
     async def connect(self, get_info: bool = False) -> None:
         """Connect to device."""
-        if self._device:
-            return
-
         if not self._ip:
             self._ip = await resolve(self._host)
 
-        self._device = JvcDevice(self._ip, self._port, self._timeout, self._password)
+        # Create device only once - reuse across connections
+        if self._device is None:
+            self._device = JvcDevice(
+                self._ip, self._port, self._timeout, self._password
+            )
 
         if not await self.test():
             raise JvcProjectorConnectError("Failed to verify connection")
@@ -94,10 +95,13 @@ class JvcProjector:
             await self.get_info()
 
     async def disconnect(self) -> None:
-        """Disconnect from device."""
+        """Disconnect from device.
+
+        Note: We keep the JvcDevice instance for reuse - only the socket connection is closed.
+        """
         if self._device:
             await self._device.disconnect()
-            self._device = None
+            # Don't set self._device = None - keep it for reuse
 
     async def get_info(self) -> dict[str, str]:
         """Get device info."""
@@ -171,7 +175,7 @@ class JvcProjector:
     async def ref(self, code: str) -> str | None:
         """Send reference code."""
         return (await self._send([JvcCommand(code, True)]))[0]
-        
+
     # async def _send(self, cmds: list[JvcCommand]) -> list[str | None]:
     #     """Send command to device."""
     #     if self._device is None:
@@ -181,7 +185,7 @@ class JvcProjector:
 
     #     return [cmd.response for cmd in cmds]
 
-    #2024 Update - Connect on demand
+    # 2024 Update - Connect on demand
     async def _send(self, cmds: list[JvcCommand]) -> list[str | None]:
         """Send command to device."""
         if self._device is None:
@@ -190,7 +194,7 @@ class JvcProjector:
         await self._device.send(cmds)
         return [cmd.response for cmd in cmds]
 
-    #2024 Update - Get light source time
+    # 2024 Update - Get light source time
     async def get_light_source_time(self) -> str | None:
         """Get light source (laser) usage time."""
         return await self.ref(command.IFLT)

@@ -54,23 +54,22 @@ class JvcDevice:
 
         self._password = password or ""
         self._auth = b""
+        self._auth_logged = False  # Track if we've logged the auth method
 
         if password:
             # Check if password is already a SHA256 hash (64 hex characters)
             if SHA256_PATTERN.match(password):
                 # Password is already hashed - use it directly
                 self._auth = password.encode()
-                _LOGGER.debug(
-                    "Password appears to be pre-hashed SHA256, using directly"
-                )
+                self._auth_type = "pre-hashed"
             else:
                 # Password is plaintext - hash it with the salt
                 # JVC projectors require: SHA256(password + "JVCKWPJ")
                 hashed = sha256(f"{password}{AUTH_SALT}".encode()).hexdigest()
                 self._auth = hashed.encode()
-                _LOGGER.debug(
-                    "Password is plaintext, hashed with salt for authentication"
-                )
+                self._auth_type = "plaintext"
+        else:
+            self._auth_type = "none"
 
         self._lock = asyncio.Lock()
         self._keepalive: asyncio.Task | None = None
@@ -120,6 +119,16 @@ class JvcDevice:
 
     async def _connect(self) -> None:
         """Internal connect method used by send()."""
+        # Log auth method only once per device instance
+        if not self._auth_logged and self._auth:
+            if self._auth_type == "pre-hashed":
+                _LOGGER.debug("Using pre-hashed SHA256 password for authentication")
+            else:
+                _LOGGER.debug(
+                    "Using plaintext password (hashed with salt) for authentication"
+                )
+            self._auth_logged = True
+
         elapsed = time() - self._last
         if elapsed < 0.75:
             await asyncio.sleep(0.75 - elapsed)
