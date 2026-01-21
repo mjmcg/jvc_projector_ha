@@ -20,11 +20,18 @@ There is a newer [**2025 External Command Communication Specification**](https:/
 
 ## Included Entities
 
+**Remote Control**
+- Power On/Off toggle
+- Virtual remote with all IR remote buttons accessible via:
+  - Activity dropdown in the entity card
+  - `remote.send_command` service calls
+  - Lovelace button cards (example provided in `lovelace/jvc_remote_card.yaml`)
+- Available remote buttons: menu, up, down, left, right, ok, back, info, hide, input, picture_mode, lens_control, mpc, hdmi_1, hdmi_2, mode_1, mode_2, mode_3, and more
+
 **Controls**
-- Power On/Off
 - Input source (HDMI 1/2)
 - Picture mode selection (Cinema, Natural, HDR, etc.)
-- LD Power (lamp power: Low/Med/High)
+- LD Power (laser diode current value: 0-255)
 - Dynamic Control (Off/Low/High/Balanced)
 
 **Sensors**
@@ -36,6 +43,7 @@ There is a newer [**2025 External Command Communication Specification**](https:/
 - Content type (SDR/HDR10/HDR10+/HLG)
 - Colorimetry (BT.709, BT.2020, DCI-P3, etc.)
 - Model (projector model name)
+- LD Current Value (current laser diode power level)
 
 ---
 

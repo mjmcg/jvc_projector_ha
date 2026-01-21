@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 from hashlib import sha256
 import logging
-import struct
+import re
 from time import time
 
 from . import const
@@ -34,10 +34,10 @@ from .error import (
 KEEPALIVE_TTL = 2
 
 # Delay between commands to prevent overwhelming the projector
-# Projector typically responds in ~100-150ms, but some models may need throttling
-# Reduce at your own risk - some projectors may drop commands if sent too rapidly
-# Tested working delay on an NZ500: 0.1s
 COMMAND_THROTTLE_DELAY = 0.1  # seconds
+
+# Regex to match a SHA256 hash (64 hex characters)
+SHA256_PATTERN = re.compile(r"^[a-fA-F0-9]{64}$")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -50,11 +50,27 @@ class JvcDevice:
     ) -> None:
         """Initialize class."""
         self._conn = JvcConnection(ip, port, timeout)
-        self._timeout = timeout  # Store timeout for later use
+        self._timeout = timeout
 
+        self._password = password or ""
         self._auth = b""
+
         if password:
-            self._auth = struct.pack(f"{max(10, len(password))}s", password.encode())
+            # Check if password is already a SHA256 hash (64 hex characters)
+            if SHA256_PATTERN.match(password):
+                # Password is already hashed - use it directly
+                self._auth = password.encode()
+                _LOGGER.debug(
+                    "Password appears to be pre-hashed SHA256, using directly"
+                )
+            else:
+                # Password is plaintext - hash it with the salt
+                # JVC projectors require: SHA256(password + "JVCKWPJ")
+                hashed = sha256(f"{password}{AUTH_SALT}".encode()).hexdigest()
+                self._auth = hashed.encode()
+                _LOGGER.debug(
+                    "Password is plaintext, hashed with salt for authentication"
+                )
 
         self._lock = asyncio.Lock()
         self._keepalive: asyncio.Task | None = None
@@ -145,23 +161,16 @@ class JvcDevice:
             raise JvcProjectorConnectError("Retries exceeded")
 
         _LOGGER.debug("Handshake sending '%s'", PJREQ.decode())
-        await self._conn.write(PJREQ + (b"_" + self._auth if self._auth else b""))
+
+        # Send PJREQ with password if set
+        if self._auth:
+            await self._conn.write(PJREQ + b"_" + self._auth)
+        else:
+            await self._conn.write(PJREQ)
 
         try:
             data = await self._conn.read(len(PJACK))
             _LOGGER.debug("Handshake received %s", data)
-
-            if data == PJNAK:
-                _LOGGER.debug("Standard auth failed, trying SHA256 auth")
-                auth = (
-                    sha256(f"{self._auth.decode()}{AUTH_SALT}".encode())
-                    .hexdigest()
-                    .encode()
-                )
-                await self._conn.write(PJREQ + b"_" + auth)
-                data = await self._conn.read(len(PJACK))
-                if data == PJACK:
-                    self._auth = auth
 
             if data == PJNAK:
                 _LOGGER.error(
